@@ -1,13 +1,10 @@
 package com.example.WeatherBot.telegram;
 
 import com.example.WeatherBot.config.BotConfig;
-import com.example.WeatherBot.service.WeatherService;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
+import com.example.WeatherBot.service.MessageGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
-import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
@@ -15,12 +12,12 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 @Component
 public class TelegramBot extends TelegramLongPollingBot {
 
-    private final BotConfig botConfig;
+    @Autowired
+    private BotConfig botConfig;
 
     @Autowired
-    public TelegramBot(BotConfig botConfig) {
-        this.botConfig = botConfig;
-    }
+    private MessageGenerator messageGenerator;
+
 
     @Override
     public String getBotUsername() {
@@ -35,13 +32,21 @@ public class TelegramBot extends TelegramLongPollingBot {
     @Override
     public void onUpdateReceived(Update update) {
 
-        if(update.hasMessage()) {
-            try {
-                execute(new SendMessage(String.valueOf(update.getMessage().getChatId()), String.valueOf(WeatherService.getCurrentWeather().getMain().getTemp())));
+        handleUpdate(update);
+    }
 
-            } catch (TelegramApiException e) {
-                e.printStackTrace();
-            }
+    public void sendMessage (Long chatId, String text) {
+        try {
+            execute(new SendMessage(String.valueOf(chatId), text));
+        } catch (TelegramApiException e) {
+            e.printStackTrace();
         }
     }
+
+    public void handleUpdate(Update update) {
+        if (update.hasMessage()) {
+            sendMessage(update.getMessage().getChatId(), messageGenerator.generateStartMessage());
+        }
+    }
+
 }
