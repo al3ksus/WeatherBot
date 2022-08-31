@@ -1,19 +1,23 @@
 package com.example.WeatherBot.config;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.stereotype.Component;
 
+
+@Component
 @Configuration
-@Data
-@PropertySource("application.properties")
+@PropertySource("application.yaml")
+@Getter
+@Setter
 public class BotConfig {
 
     @Value("${bot.name}")
-    String botName;
+    private String botName;
 
     @Value("${bot.token}")
-    String token;
-
+    private String botToken;
 }

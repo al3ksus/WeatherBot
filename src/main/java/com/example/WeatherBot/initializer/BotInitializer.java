@@ -1,6 +1,6 @@
-package com.example.WeatherBot.config;
+package com.example.WeatherBot.initializer;
 
-import com.example.WeatherBot.service.TelegramBot;
+import com.example.WeatherBot.telegram.TelegramBot;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
@@ -13,16 +13,15 @@ import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 public class BotInitializer {
 
     @Autowired
-    TelegramBot bot;
+    TelegramBot telegramBot;
 
     @EventListener({ContextRefreshedEvent.class})
     public void init() throws TelegramApiException {
         TelegramBotsApi telegramBotsApi = new TelegramBotsApi(DefaultBotSession.class);
         try {
-            telegramBotsApi.registerBot(bot);
-        }
-        catch (TelegramApiException e) {
-
+            telegramBotsApi.registerBot(telegramBot);
+        } catch (TelegramApiException e) {
+            e.printStackTrace();
         }
     }
 }
