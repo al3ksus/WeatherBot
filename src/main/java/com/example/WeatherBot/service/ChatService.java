@@ -6,6 +6,8 @@ import com.example.WeatherBot.repository.ChatRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class ChatService {
 
@@ -18,5 +20,11 @@ public class ChatService {
 
     public boolean isChatExist(Long chatId) {
         return chatRepository.existsByChatId(chatId);
+    }
+
+    public void setBotState(Long chatId, BotState botState){
+        Chat chat = chatRepository.getByChatId(chatId);
+        chat.setBotState(BotState.DEFAULT);
+        chatRepository.save(chat);
     }
 }

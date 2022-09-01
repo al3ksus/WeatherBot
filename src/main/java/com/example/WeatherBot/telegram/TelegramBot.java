@@ -1,6 +1,10 @@
 package com.example.WeatherBot.telegram;
 
 import com.example.WeatherBot.config.BotConfig;
+import com.example.WeatherBot.model.BotState;
+import com.example.WeatherBot.model.Command;
+import com.example.WeatherBot.repository.ChatRepository;
+import com.example.WeatherBot.service.ChatService;
 import com.example.WeatherBot.telegram.service.MessageGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -17,6 +21,9 @@ public class TelegramBot extends TelegramLongPollingBot {
 
     @Autowired
     private MessageGenerator messageGenerator;
+
+    @Autowired
+    private ChatService chatService;
 
 
     @Override
@@ -44,8 +51,36 @@ public class TelegramBot extends TelegramLongPollingBot {
     }
 
     public void handleUpdate(Update update) {
+        String messageText = "";
+        Long chatId = null;
+
         if (update.hasMessage()) {
+            messageText = update.getMessage().getText().toUpperCase();
+            chatId = update.getMessage().getChatId();
+        }
+
+        if (!chatService.isChatExist(chatId)) {
+            chatService.addChat(chatId, BotState.DEFAULT);
             sendMessage(update.getMessage().getChatId(), messageGenerator.generateStartMessage());
+        } else {
+            handleBotState(update, messageText, chatId);
+        }
+    }
+
+    public void handleBotState(Update update, String messageText, Long chatId) {
+
+        if (messageText.charAt(0) == '/') {
+
+            messageText = messageText.substring(1);
+
+            if (messageText.equals(Command.START.toString())) {
+                chatService.setBotState(chatId, BotState.DEFAULT);
+                sendMessage(chatId, messageGenerator.generateStartMessage());
+
+            } else if (messageText.equals(Command.SETCITY.toString())) {
+                chatService.setBotState(chatId, BotState.SETCITY);
+                sendMessage(chatId, messageGenerator.generateSetCityMessage());
+            }
         }
     }
 

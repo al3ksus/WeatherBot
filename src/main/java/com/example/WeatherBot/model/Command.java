@@ -1,5 +1,5 @@
 package com.example.WeatherBot.model;
 
 public enum Command {
-    START
+    START, SETCITY
 }

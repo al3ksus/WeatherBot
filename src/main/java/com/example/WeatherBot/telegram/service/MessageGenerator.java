@@ -7,6 +7,10 @@ import org.springframework.stereotype.Service;
 public class MessageGenerator {
 
     public String generateStartMessage() {
-        return "Привет, я умею показывать погоду. Введи город, в котором хочешь узнать погоду";
+        return "Привет, я умею показывать погоду. Используй команду /setcity, чтобы выбрать город";
+    }
+
+    public String generateSetCityMessage() {
+        return "Введи название города";
     }
 }
