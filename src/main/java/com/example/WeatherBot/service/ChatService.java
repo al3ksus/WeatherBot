@@ -24,7 +24,11 @@ public class ChatService {
 
     public void setBotState(Long chatId, BotState botState){
         Chat chat = chatRepository.getByChatId(chatId);
-        chat.setBotState(BotState.DEFAULT);
+        chat.setBotState(botState);
         chatRepository.save(chat);
+    }
+
+    public Chat getByChatId(Long chatId) {
+        return chatRepository.getByChatId(chatId);
     }
 }

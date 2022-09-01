@@ -11,6 +11,14 @@ public class MessageGenerator {
     }
 
     public String generateSetCityMessage() {
-        return "Введи название города";
+        return "Введите название города";
+    }
+
+    public String generateNoSuchCommandMessage() {
+        return "Такой команды нет";
+    }
+
+    public String generateNoSuchCityMessage() {
+        return "Проверьте правильность написания названия города";
     }
 }
