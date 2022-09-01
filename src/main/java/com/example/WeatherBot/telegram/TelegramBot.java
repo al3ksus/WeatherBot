@@ -71,16 +71,20 @@ public class TelegramBot extends TelegramLongPollingBot {
 
         if (messageText.charAt(0) == '/') {
 
-            messageText = messageText.substring(1);
+            String command = messageText.substring(1);
 
-            if (messageText.equals(Command.START.toString())) {
-                chatService.setBotState(chatId, BotState.DEFAULT);
-                sendMessage(chatId, messageGenerator.generateStartMessage());
-
-            } else if (messageText.equals(Command.SETCITY.toString())) {
-                chatService.setBotState(chatId, BotState.SETCITY);
-                sendMessage(chatId, messageGenerator.generateSetCityMessage());
+            switch (command) {
+                case "START" -> {
+                    chatService.setBotState(chatId, BotState.DEFAULT);
+                    sendMessage(chatId, messageGenerator.generateStartMessage());
+                }
+                case "SETCITY" -> {
+                    chatService.setBotState(chatId, BotState.SETCITY);
+                    sendMessage(chatId, messageGenerator.generateSetCityMessage());
+                }
+                default -> sendMessage(chatId, "Такой команды нет");
             }
+
         }
     }
 
