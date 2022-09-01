@@ -1,7 +1,7 @@
 package com.example.WeatherBot.telegram;
 
 import com.example.WeatherBot.config.BotConfig;
-import com.example.WeatherBot.service.MessageGenerator;
+import com.example.WeatherBot.telegram.service.MessageGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
