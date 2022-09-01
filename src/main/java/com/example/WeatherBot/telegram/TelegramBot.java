@@ -3,18 +3,20 @@ package com.example.WeatherBot.telegram;
 import com.example.WeatherBot.config.BotConfig;
 import com.example.WeatherBot.model.BotState;
 import com.example.WeatherBot.model.Chat;
-import com.example.WeatherBot.model.Command;
-import com.example.WeatherBot.repository.ChatRepository;
+import com.example.WeatherBot.model.city.City;
+import com.example.WeatherBot.model.city.CityInfo;
 import com.example.WeatherBot.service.ChatService;
 import com.example.WeatherBot.service.WeatherService;
 import com.example.WeatherBot.telegram.service.MessageGenerator;
-import com.example.WeatherBot.weather.CurrentWeather;
+import com.example.WeatherBot.model.weather.CurrentWeather;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+
+import java.util.Optional;
 
 @Component
 public class TelegramBot extends TelegramLongPollingBot {
@@ -97,13 +99,20 @@ public class TelegramBot extends TelegramLongPollingBot {
 
             switch (botState) {
                 case SETCITY -> {
-                    CurrentWeather currentWeather =  weatherService.getCurrentWeather(messageText);
+                    City city = weatherService.isCityExist(messageText);
 
-                    if (currentWeather != null) {
-                        sendMessage(chatId, "В городе " + messageText.charAt(0) + messageText.substring(1).toLowerCase() + " солнечно!");
-                    } else {
-                        sendMessage(chatId, messageGenerator.generateNoSuchCityMessage());
+                    if (city != null) {
+                        Optional<CityInfo> cityInfo = city.getCityInfo().stream().filter(info -> info.getCountry().equals("RU")).findFirst();
+
+                        if (cityInfo.isPresent()) {
+                            CurrentWeather currentWeather = weatherService.getCurrentWeather(cityInfo.get().getLat(), cityInfo.get().getLon());
+
+                            if (currentWeather != null) {
+                                sendMessage(chatId, "Работает");
+                            }
+                        }
                     }
+
                 }
             }
         }

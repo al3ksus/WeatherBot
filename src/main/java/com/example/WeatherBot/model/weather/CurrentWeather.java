@@ -1,6 +1,5 @@
-package com.example.WeatherBot.weather;
+package com.example.WeatherBot.model.weather;
 import lombok.Getter;
-import lombok.ToString;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
