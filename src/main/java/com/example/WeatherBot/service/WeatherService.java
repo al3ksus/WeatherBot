@@ -1,6 +1,7 @@
 package com.example.WeatherBot.service;
 
 import com.example.WeatherBot.model.city.City;
+import com.example.WeatherBot.model.city.CityInfo;
 import com.example.WeatherBot.model.weather.CurrentWeather;
 import com.example.WeatherBot.utilit.Link;
 import com.google.gson.Gson;
@@ -10,6 +11,9 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 @Service
 public class WeatherService {
@@ -24,7 +28,7 @@ public class WeatherService {
         CurrentWeather currentWeather;
 
         try {
-            connection = (HttpURLConnection) new URL( Link.currentWeatherLink + String.valueOf(lat) + "&lon=" + String.valueOf(lon) + "&appid=" + API_KEY + "&units=metric").openConnection();
+            connection = (HttpURLConnection) new URL( Link.currentWeatherLink + lat + "&lon=" + lon + "&appid=" + API_KEY + "&units=metric").openConnection();
 
             connection.setRequestMethod("GET");
             connection.connect();
@@ -47,35 +51,34 @@ public class WeatherService {
         return currentWeather;
     }
 
-    public City isCityExist(String cityTitle) {
+    public CityInfo[] isCityExist(String cityTitle) {
+
         HttpURLConnection connection;
 
         StringBuilder response = new StringBuilder();
 
-        City city;
+        CityInfo[] cityInfo;
 
         try {
-            connection = (HttpURLConnection) new URL( Link.geocodingLink + cityTitle + "&appid=" + API_KEY + "&units=metric").openConnection();
+            connection = (HttpURLConnection) new URL(Link.geocodingLink + cityTitle + "&appid=" + API_KEY + "&units=metric").openConnection();
 
             connection.setRequestMethod("GET");
             connection.connect();
 
             BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
 
-            String  line;
+            String line;
 
-            while((line = reader.readLine()) != null) {
+            while ((line = reader.readLine()) != null) {
                 response.append(line);
             }
 
-            Gson gson = new Gson();
-            city = gson.fromJson(String.valueOf(response), City.class);
+            cityInfo = new Gson().fromJson(String.valueOf(response), CityInfo[].class);
 
         } catch (Throwable cause) {
             return null;
         }
-
-        return city;
+        return cityInfo;
     }
 
 }

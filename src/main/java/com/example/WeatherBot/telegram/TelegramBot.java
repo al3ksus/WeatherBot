@@ -16,6 +16,8 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 @Component
@@ -99,18 +101,25 @@ public class TelegramBot extends TelegramLongPollingBot {
 
             switch (botState) {
                 case SETCITY -> {
-                    City city = weatherService.isCityExist(messageText);
+                    CityInfo[] cityInfo = weatherService.isCityExist(messageText);
 
-                    if (city != null) {
-                        Optional<CityInfo> cityInfo = city.getCityInfo().stream().filter(info -> info.getCountry().equals("RU")).findFirst();
+                    if (cityInfo.length != 0) {
+                        Optional<CityInfo> optionalCityInfo = Arrays.stream(cityInfo).filter(info -> info.getCountry().equals("RU")).findFirst();
 
-                        if (cityInfo.isPresent()) {
-                            CurrentWeather currentWeather = weatherService.getCurrentWeather(cityInfo.get().getLat(), cityInfo.get().getLon());
+                        if (optionalCityInfo.isPresent()) {
+                            CurrentWeather currentWeather = weatherService.getCurrentWeather(optionalCityInfo.get().getLat(), optionalCityInfo.get().getLon());
+                            String cityName = optionalCityInfo.get().getLocal_names().getRu();
 
-                            if (currentWeather != null) {
-                                sendMessage(chatId, "Работает");
-                            }
+                            sendMessage(chatId, "В городе "
+                                    + cityName
+                                    + " " + currentWeather.getMain().getTemp()
+                                    + " градуса");
+
+                        } else {
+                            sendMessage(chatId, messageGenerator.generateNonRussianCityMessage());
                         }
+                    } else {
+                        sendMessage(chatId, messageGenerator.generateNoSuchCityMessage());
                     }
 
                 }

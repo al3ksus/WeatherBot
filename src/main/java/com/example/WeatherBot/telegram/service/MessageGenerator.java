@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 public class MessageGenerator {
 
     public String generateStartMessage() {
-        return "Привет, я умею показывать погоду.\nИспользуй команду /setcity, чтобы выбрать город";
+        return "Привет, я умею показывать погоду в городах России.\nИспользуй команду /setcity, чтобы выбрать город";
     }
 
     public String generateSetCityMessage() {
@@ -15,10 +15,14 @@ public class MessageGenerator {
     }
 
     public String generateNoSuchCommandMessage() {
-        return "Такой команды нет";
+        return "Такой команды я не знаю";
     }
 
     public String generateNoSuchCityMessage() {
-        return "Проверьте правильность написания названия города";
+        return "Такого города я не знаю";
+    }
+
+    public String generateNonRussianCityMessage() {
+        return "Я могу показывать погоду только в городах России";
     }
 }

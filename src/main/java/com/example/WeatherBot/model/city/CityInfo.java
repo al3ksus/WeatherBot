@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 @Getter
 public class CityInfo {
 
-    private LocalNames localNames;
+    private LocalNames local_names;
 
     private double lat;
 
