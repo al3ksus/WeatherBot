@@ -1,24 +1,21 @@
 package com.example.WeatherBot.telegram;
 
 import com.example.WeatherBot.config.BotConfig;
-import com.example.WeatherBot.model.BotState;
-import com.example.WeatherBot.model.Chat;
-import com.example.WeatherBot.model.city.City;
-import com.example.WeatherBot.model.city.CityInfo;
 import com.example.WeatherBot.service.ChatService;
+import com.example.WeatherBot.service.BotService;
 import com.example.WeatherBot.service.WeatherService;
-import com.example.WeatherBot.telegram.service.MessageGenerator;
-import com.example.WeatherBot.model.weather.CurrentWeather;
+import com.example.WeatherBot.service.MessageGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Component
 public class TelegramBot extends TelegramLongPollingBot {
@@ -35,6 +32,9 @@ public class TelegramBot extends TelegramLongPollingBot {
     @Autowired
     private WeatherService weatherService;
 
+    @Autowired
+    private BotService botService;
+
 
     @Override
     public String getBotUsername() {
@@ -49,10 +49,19 @@ public class TelegramBot extends TelegramLongPollingBot {
     @Override
     public void onUpdateReceived(Update update) {
 
-        handleUpdate(update);
+        try
+        {
+            execute(botService.handleUpdate(update));
+        } catch (TelegramApiException e) {
+            try {
+                execute(new SendMessage(String.valueOf(update.getMessage().getChatId()), "Чтобы увидеть список комманд используйте /help"));
+            } catch (TelegramApiException ex) {
+                ex.printStackTrace();
+            }
+        }
     }
 
-    public void sendMessage (Long chatId, String text) {
+    /*public void sendMessage (Long chatId, String text) {
         try {
             execute(new SendMessage(String.valueOf(chatId), text));
         } catch (TelegramApiException e) {
@@ -60,7 +69,31 @@ public class TelegramBot extends TelegramLongPollingBot {
         }
     }
 
-    public void handleUpdate(Update update) {
+    public void sendMessageWithButton(Long chatId, String text) {
+
+        InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
+
+        InlineKeyboardButton button = new InlineKeyboardButton();
+        button.setText("Выбрать город");
+        button.setCallbackData("button");
+
+        List<InlineKeyboardButton> row = new ArrayList<>();
+        row.add(button);
+        List<List<InlineKeyboardButton>> rowList = new ArrayList<>();
+        rowList.add(row);
+        SendMessage send = new SendMessage(String.valueOf(chatId), text);
+        inlineKeyboardMarkup.setKeyboard(rowList);
+        send.setReplyMarkup(inlineKeyboardMarkup);
+
+        try {
+            execute(send);
+        } catch (TelegramApiException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public SendMessage handleUpdate(Update update) {
         String messageText = "";
         Long chatId = null;
 
@@ -71,13 +104,13 @@ public class TelegramBot extends TelegramLongPollingBot {
 
         if (!chatService.isChatExist(chatId)) {
             chatService.addChat(chatId, BotState.DEFAULT);
-            sendMessage(update.getMessage().getChatId(), messageGenerator.generateStartMessage());
+            return new SendMessage(String.valueOf(chatId), messageGenerator.generateStartMessage());//sendMessage(update.getMessage().getChatId(), messageGenerator.generateStartMessage());
         } else {
-            handleBotState(update, messageText, chatId);
+            return handleBotState(update, messageText, chatId);
         }
     }
 
-    public void handleBotState(Update update, String messageText, Long chatId) {
+    public SendMessage handleBotState(Update update, String messageText, Long chatId) {
 
         if (messageText.charAt(0) == '/') {
 
@@ -86,7 +119,7 @@ public class TelegramBot extends TelegramLongPollingBot {
             switch (command) {
                 case "START" -> {
                     chatService.setBotState(chatId, BotState.DEFAULT);
-                    sendMessage(chatId, messageGenerator.generateStartMessage());
+                    return new SendMessage(String.valueOf(chatId), messageGenerator.generateStartMessage());//sendMessageWithButton(chatId, messageGenerator.generateStartMessage());
                 }
                 case "SETCITY" -> {
                     chatService.setBotState(chatId, BotState.SETCITY);
@@ -107,13 +140,11 @@ public class TelegramBot extends TelegramLongPollingBot {
                         Optional<CityInfo> optionalCityInfo = Arrays.stream(cityInfo).filter(info -> info.getCountry().equals("RU")).findFirst();
 
                         if (optionalCityInfo.isPresent()) {
-                            CurrentWeather currentWeather = weatherService.getCurrentWeather(optionalCityInfo.get().getLat(), optionalCityInfo.get().getLon());
-                            String cityName = optionalCityInfo.get().getLocal_names().getRu();
 
-                            sendMessage(chatId, "В городе "
-                                    + cityName
-                                    + " " + currentWeather.getMain().getTemp()
-                                    + " градуса");
+                            CurrentWeather currentWeather = weatherService.getCurrentWeather(optionalCityInfo.get().getLat(), optionalCityInfo.get().getLon());
+                            String cityName = messageText.charAt(0) + messageText.substring(1).toLowerCase();
+
+                            sendMessage(chatId, messageGenerator.generateCurrentWeatherMessage(currentWeather, cityName));
 
                         } else {
                             sendMessage(chatId, messageGenerator.generateNonRussianCityMessage());
@@ -125,6 +156,8 @@ public class TelegramBot extends TelegramLongPollingBot {
                 }
             }
         }
-    }
+
+        return  null;
+    }*/
 
 }

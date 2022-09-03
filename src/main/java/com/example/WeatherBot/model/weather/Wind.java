@@ -1,16 +1,11 @@
 package com.example.WeatherBot.model.weather;
+
 import lombok.Getter;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-
 @Component
 @Getter
-public class CurrentWeather {
+public class Wind {
 
-    private List<Weather> weather;
-
-    private Main main;
-
-    private Wind wind;
+    private double speed;
 }

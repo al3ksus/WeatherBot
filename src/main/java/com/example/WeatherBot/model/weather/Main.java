@@ -9,5 +9,5 @@ public class Main {
 
     private double temp;
 
-    private double feelsLike;
+    private double feels_like;
 }
