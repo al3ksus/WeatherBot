@@ -1,9 +1,7 @@
 package com.example.WeatherBot.service.handler;
 
 import com.example.WeatherBot.model.BotState;
-import com.example.WeatherBot.model.chat.Chat;
 import com.example.WeatherBot.model.chat.DefaultCity;
-import com.example.WeatherBot.model.weather.CurrentWeather;
 import com.example.WeatherBot.service.ChatService;
 import com.example.WeatherBot.service.KeyBoardService;
 import com.example.WeatherBot.service.WeatherService;
@@ -67,16 +65,16 @@ public class CommandHandler {
 
     public SendMessage handleGetWeather(Long chatId) {
         DefaultCity city = chatService.getByChatId(chatId).getDefaultCity();
+        SendMessage sendMessage;
 
         if (city != null) {
-            CurrentWeather currentWeather = weatherService.getCurrentWeather(city.getLat(), city.getLon());
-            chatService.setBotState(chatId, BotState.DEFAULT);
-            return new SendMessage(String.valueOf(chatId), messageGenerator.generateCurrentWeatherMessage(currentWeather, city.getName()));
+            sendMessage = new SendMessage(String.valueOf(chatId), messageGenerator.generateWeatherMessage());
+            sendMessage.setReplyMarkup(keyBoardService.getWeatherButtonRow());
         }
         else {
-            SendMessage sendMessage = new SendMessage(String.valueOf(chatId), messageGenerator.generateNoDefaultCityMessage());
+            sendMessage = new SendMessage(String.valueOf(chatId), messageGenerator.generateNoDefaultCityMessage());
             sendMessage.setReplyMarkup(keyBoardService.getButton("Выбрать город", "/setDefaultCity"));
-            return sendMessage;
         }
+        return sendMessage;
     }
 }

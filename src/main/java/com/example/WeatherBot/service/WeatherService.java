@@ -1,27 +1,30 @@
 package com.example.WeatherBot.service;
 
 import com.example.WeatherBot.model.city.CityInfo;
-import com.example.WeatherBot.model.weather.CurrentWeather;
+import com.example.WeatherBot.model.weather.Forecast;
+import com.example.WeatherBot.model.weather.MainWeather;
 import com.example.WeatherBot.utilit.Link;
 import com.google.gson.Gson;
+import com.vdurmont.emoji.EmojiParser;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Calendar;
 
 @Service
 public class WeatherService {
 
     private final static String API_KEY = "f567de296dab0b7026ca5ad7072e46f6";
 
-    public CurrentWeather getCurrentWeather(double lat, double lon) {
+    public MainWeather getCurrentWeather(double lat, double lon) {
         HttpURLConnection connection;
 
         StringBuilder response = new StringBuilder();
 
-        CurrentWeather currentWeather;
+        MainWeather mainWeather;
 
         try {
             connection = (HttpURLConnection) new URL( Link.currentWeatherLink + lat + "&lon=" + lon + "&lang=ru&appid=" + API_KEY + "&units=metric").openConnection();
@@ -38,13 +41,13 @@ public class WeatherService {
             }
 
             Gson gson = new Gson();
-            currentWeather = gson.fromJson(String.valueOf(response), CurrentWeather.class);
+            mainWeather = gson.fromJson(String.valueOf(response), MainWeather.class);
 
         } catch (Throwable cause) {
             return null;
         }
 
-        return currentWeather;
+        return mainWeather;
     }
 
     public CityInfo[] isCityExist(String cityTitle) {
@@ -75,6 +78,37 @@ public class WeatherService {
             return null;
         }
         return cityInfo;
+    }
+
+    public Forecast getForecast(double lat, double lon) {
+        HttpURLConnection connection;
+
+        StringBuilder response = new StringBuilder();
+
+        Forecast forecast;
+
+        try {
+            connection = (HttpURLConnection) new URL( Link.forecastLink + lat + "&lon=" + lon + "&lang=ru&appid=" + API_KEY + "&units=metric").openConnection();
+
+            connection.setRequestMethod("GET");
+            connection.connect();
+
+            BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+
+            String  line;
+
+            while((line = reader.readLine()) != null) {
+                response.append(line);
+            }
+
+            Gson gson = new Gson();
+            forecast = gson.fromJson(String.valueOf(response), Forecast.class);
+
+        } catch (Throwable cause) {
+            return null;
+        }
+
+        return forecast;
     }
 
 }

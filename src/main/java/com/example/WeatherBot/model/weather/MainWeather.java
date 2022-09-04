@@ -1,0 +1,20 @@
+package com.example.WeatherBot.model.weather;
+import lombok.Getter;
+import org.springframework.stereotype.Component;
+
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+
+@Component
+@Getter
+public class MainWeather {
+
+    private List<Weather> weather;
+
+    private Main main;
+
+    private Wind wind;
+
+    private Long dt;
+}

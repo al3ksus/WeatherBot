@@ -34,7 +34,17 @@ public class ChatService {
 
     public void setDefaultCity(Long chatId, String name, double lat, double lon) {
         Chat chat = chatRepository.getByChatId(chatId);
-        DefaultCity defaultCity = new DefaultCity(name, lat, lon);
+        DefaultCity defaultCity = chat.getDefaultCity();
+
+        if (defaultCity == null) {
+            defaultCity = new DefaultCity(name, lat, lon);
+        }
+        else {
+            defaultCity.setName(name);
+            defaultCity.setLat(lat);
+            defaultCity.setLon(lon);
+        }
+
         defaultCityRepository.save(defaultCity);
         chat.setDefaultCity(defaultCity);
         chatRepository.save(chat);
