@@ -1,18 +1,22 @@
 package com.example.WeatherBot.service;
 
 import com.example.WeatherBot.model.BotState;
-import com.example.WeatherBot.model.Chat;
+import com.example.WeatherBot.model.chat.Chat;
+import com.example.WeatherBot.model.chat.DefaultCity;
 import com.example.WeatherBot.repository.ChatRepository;
+import com.example.WeatherBot.repository.DefaultCityRepository;
+import com.fasterxml.jackson.jaxrs.json.annotation.JSONP;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 @Service
 public class ChatService {
 
     @Autowired
     private ChatRepository chatRepository;
+
+    @Autowired
+    private DefaultCityRepository defaultCityRepository;
 
     public void addChat(Long chatId, BotState botState) {
         chatRepository.save(new Chat(chatId, botState));
@@ -25,6 +29,14 @@ public class ChatService {
     public void setBotState(Long chatId, BotState botState){
         Chat chat = chatRepository.getByChatId(chatId);
         chat.setBotState(botState);
+        chatRepository.save(chat);
+    }
+
+    public void setDefaultCity(Long chatId, String name, double lat, double lon) {
+        Chat chat = chatRepository.getByChatId(chatId);
+        DefaultCity defaultCity = new DefaultCity(name, lat, lon);
+        defaultCityRepository.save(defaultCity);
+        chat.setDefaultCity(defaultCity);
         chatRepository.save(chat);
     }
 

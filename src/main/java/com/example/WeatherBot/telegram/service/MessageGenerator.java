@@ -1,4 +1,4 @@
-package com.example.WeatherBot.service;
+package com.example.WeatherBot.telegram.service;
 
 import com.example.WeatherBot.model.weather.CurrentWeather;
 import org.springframework.stereotype.Component;
@@ -12,7 +12,9 @@ import static javax.swing.text.html.HTML.Tag.U;
 public class MessageGenerator {
 
     public String generateStartMessage() {
-        return "Привет, я умею показывать погоду в городах России.\nЕсли хотите узнать погоду, жмите на кнопку \"Выбрать город\".\nЧтобы увидеть список комманд используйте /help";
+        return "Привет, я умею показывать погоду в городах России.\n" +
+                "Чтобы увидеть инструкцию используйте /help.\n" +
+                "Для начала давайте выберем город по умолчанию";
     }
 
     public String generateSetCityMessage() {
@@ -40,5 +42,15 @@ public class MessageGenerator {
                 + "ощущается как " + decimalFormat.format(currentWeather.getMain().getFeels_like()) + " \u00B0С,\n"
                 + "скорость ветра " + decimalFormat.format(currentWeather.getWind().getSpeed()) + " м/c";
 
+    }
+
+    public String generateDefaultCityMessage(String cityName) {
+        return "Новый город по умолчанию - " + cityName + ".\n"
+                + "Чтобы узнать погоду, используйте команду /getweather.\n"
+                + "Если хотите изменить город по умолчанию, используйте команду /setdefaultcity";
+    }
+
+    public String generateNoDefaultCityMessage() {
+        return "Эта команда показывает погоду в городе по умолчанию";
     }
 }

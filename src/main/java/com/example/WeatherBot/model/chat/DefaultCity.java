@@ -1,10 +1,10 @@
-package com.example.WeatherBot.model;
+package com.example.WeatherBot.model.chat;
 
+import com.fasterxml.jackson.jaxrs.json.annotation.JSONP;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.GeneratorType;
 
 import javax.persistence.*;
 
@@ -13,20 +13,22 @@ import javax.persistence.*;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Chat {
+public class DefaultCity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
 
-    private Long chatId;
+    private String name;
 
-    @Enumerated(EnumType.STRING)
-    private BotState botState;
+    private double lat;
 
-    public Chat(Long chatId, BotState botState) {
-        this.chatId = chatId;
-        this.botState = botState;
+    private double lon;
+
+    public DefaultCity(String name, double lat, double lon) {
+        this.name = name;
+        this.lat = lat;
+        this.lon = lon;
     }
 }

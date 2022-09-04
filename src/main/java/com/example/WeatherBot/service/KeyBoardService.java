@@ -11,12 +11,12 @@ import java.util.List;
 @Component
 public class KeyBoardService {
 
-    public InlineKeyboardMarkup getSetCityButton() {
+    public InlineKeyboardMarkup getButton(String buttonText, String callbackData) {
         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
 
         InlineKeyboardButton button = new InlineKeyboardButton();
-        button.setText("Выбрать город");
-        button.setCallbackData("/setCity");
+        button.setText(buttonText);
+        button.setCallbackData(callbackData);
 
         List<InlineKeyboardButton> row = new ArrayList<>();
         row.add(button);
