@@ -31,8 +31,7 @@ public class BotStateHandler {
     @Autowired
     private KeyBoardService keyBoardService;
 
-    @Autowired
-    private Optional<CityInfo> optionalCityInfo;
+    private CityInfo city = null;
 
     private String cityName;
 
@@ -50,10 +49,10 @@ public class BotStateHandler {
         CityInfo[] cityInfo = weatherService.isCityExist(messageText);
 
         if (cityInfo.length != 0) {
-            optionalCityInfo = Arrays.stream(cityInfo).filter(info -> info.getCountry().equals("RU")).findFirst();
+            Optional<CityInfo> optionalCityInfo = Arrays.stream(cityInfo).filter(info -> info.getCountry().equals("RU")).findFirst();
 
             if (optionalCityInfo.isPresent()) {
-
+                city = optionalCityInfo.get();
                 cityName = optionalCityInfo.get().getLocal_names() == null?
                         messageText.charAt(0) + messageText.substring(1).toLowerCase():
                         optionalCityInfo.get().getLocal_names().getRu();
@@ -85,9 +84,9 @@ public class BotStateHandler {
         if (messageText.equals("CURRENTWEATHER")) {
             MainWeather mainWeather;
 
-            if (optionalCityInfo.isPresent()) {
-                mainWeather = weatherService.getCurrentWeather(optionalCityInfo.get().getLat(), optionalCityInfo.get().getLon());
-                optionalCityInfo = Optional.empty();
+            if (city != null) {
+                mainWeather = weatherService.getCurrentWeather(city.getLat(), city.getLon());
+                city = null;
                 return new SendMessage(String.valueOf(chatId), messageGenerator.generateCurrentWeatherMessage(mainWeather, cityName));
             }
             else {
@@ -99,15 +98,15 @@ public class BotStateHandler {
         else {
             Forecast forecast;
 
-            if (optionalCityInfo.isPresent()) {
-                forecast = weatherService.getForecast(optionalCityInfo.get().getLat(), optionalCityInfo.get().getLon());
-                optionalCityInfo = Optional.empty();
-                return new SendMessage(String.valueOf(chatId), messageGenerator.generateForecastMessage(forecast));
+            if (city != null) {
+                forecast = weatherService.getForecast(city.getLat(), city.getLon());
+                city = null;
+                return new SendMessage(String.valueOf(chatId), messageGenerator.generateForecastMessage(forecast, cityName));
             }
             else {
                 DefaultCity defaultCity = chatService.getByChatId(chatId).getDefaultCity();
                 forecast = weatherService.getForecast(defaultCity.getLat(), defaultCity.getLon());
-                return new SendMessage(String.valueOf(chatId), messageGenerator.generateForecastMessage(forecast));
+                return new SendMessage(String.valueOf(chatId), messageGenerator.generateForecastMessage(forecast, defaultCity.getName()));
 
             }
         }

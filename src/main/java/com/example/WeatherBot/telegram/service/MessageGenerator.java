@@ -59,14 +59,15 @@ public class MessageGenerator {
         return "Что именно вы хотите узнать?";
     }
 
-    public String generateForecastMessage(Forecast forecast) {
+    public String generateForecastMessage(Forecast forecast, String cityName) {
         Calendar date = Calendar.getInstance();
         DecimalFormat decimalFormat = new DecimalFormat("#");
         int prevDay = -1;
         int day;
         int month;
         StringBuilder forecastStr = new StringBuilder();
-        forecastStr.append("Время    описание    температура    ветер\n");
+        forecastStr.append(cityName)
+                .append("\nВремя    описание    температура    ветер\n");
 
         for(MainWeather weather : forecast.getList()) {
             date.setTimeInMillis(weather.getDt()*1000);
@@ -93,5 +94,13 @@ public class MessageGenerator {
             prevDay = day;
         }
         return String.valueOf(forecastStr);
+    }
+
+    public String generateHelpMessage() {
+        return """
+                /start начать использовать бота
+                /setdefaultcity выбрать новый город по умолчанию
+                /setcity выбрать город, чтобы узнать в нем погоду
+                /getweather узнать погоду в городе по умолчанию""";
     }
 }

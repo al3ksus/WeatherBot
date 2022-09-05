@@ -40,6 +40,9 @@ public class CommandHandler {
             case "GETWEATHER" -> {
                 return handleGetWeather(chatId);
             }
+            case "HELP" ->{
+                return handleHelp(chatId);
+            }
             default -> {
                 return new SendMessage(String.valueOf(chatId), messageGenerator.generateNoSuchCommandMessage());
             }
@@ -76,5 +79,9 @@ public class CommandHandler {
             sendMessage.setReplyMarkup(keyBoardService.getButton("Выбрать город", "/setDefaultCity"));
         }
         return sendMessage;
+    }
+
+    private SendMessage handleHelp(Long chatId) {
+        return new SendMessage(String.valueOf(chatId),  messageGenerator.generateHelpMessage());
     }
 }
