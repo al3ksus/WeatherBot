@@ -39,11 +39,14 @@ public class MessageGenerator {
     }
 
     public String generateCurrentWeatherMessage(MainWeather mainWeather, String city) {
+        Calendar date = Calendar.getInstance();
+        date.setTimeInMillis(mainWeather.getDt()*1000);
+        int hour = date.get(Calendar.HOUR_OF_DAY);
 
         DecimalFormat decimalFormat = new DecimalFormat("#");
         return "В городе " + city
                 + " " + mainWeather.getWeather().get(0).getDescription() + " "
-                + getWeatherEmoji(mainWeather.getWeather().get(0).getDescription()) +",\n"
+                + getWeatherEmoji(mainWeather.getWeather().get(0).getDescription(), hour) +",\n"
                 + "температра воздуха " + decimalFormat.format(mainWeather.getMain().getTemp()) + " \u00B0С,\n"
                 + "ощущается как " + decimalFormat.format(mainWeather.getMain().getFeels_like()) + " \u00B0С,\n"
                 + "скорость ветра " + decimalFormat.format(mainWeather.getWind().getSpeed()) + " м/c";
@@ -92,7 +95,7 @@ public class MessageGenerator {
             hour = date.get(Calendar.HOUR_OF_DAY);
             forecastStr.append(hour < 10? "0" + hour: hour)
                     .append(":00    ")
-                    .append(getWeatherEmoji(weather.getWeather().get(0).getDescription()))
+                    .append(getWeatherEmoji(weather.getWeather().get(0).getDescription(), hour))
                     .append("    ")
                     .append(decimalFormat.format(weather.getMain().getTemp()))
                     .append(" \u00B0С    ")
@@ -112,14 +115,14 @@ public class MessageGenerator {
                 /getweather узнать погоду в городе по умолчанию""";
     }
 
-    public String getWeatherEmoji(String description) {
+    public String getWeatherEmoji(String description, int hour) {
         return switch (description) {
-            case "ясно" -> EmojiParser.parseToUnicode(":sunny:");
+            case "ясно" -> hour == 21? EmojiParser.parseToUnicode(":new_moon:"):EmojiParser.parseToUnicode(":sunny:");
             case "пасмурно" -> EmojiParser.parseToUnicode(":cloud:");
-            case "небольшая облачность" -> EmojiParser.parseToUnicode("\uD83C\uDF24");
-            case "облачно с прояснениями" -> EmojiParser.parseToUnicode(":white_sun_behind_cloud:");
-            case "небольшой дождь" -> EmojiParser.parseToUnicode("\uD83C\uDF26");
-            case "переменная облачность" -> EmojiParser.parseToUnicode(":partly_sunny:");
+            case "небольшая облачность" -> hour == 21? EmojiParser.parseToUnicode(":cloud:"): EmojiParser.parseToUnicode("\uD83C\uDF24");
+            case "облачно с прояснениями" -> hour == 21? EmojiParser.parseToUnicode(":cloud:"): EmojiParser.parseToUnicode(":white_sun_behind_cloud:");
+            case "небольшой дождь" -> hour == 21? EmojiParser.parseToUnicode("\uD83C\uDF27"): EmojiParser.parseToUnicode("\uD83C\uDF26");
+            case "переменная облачность" -> hour == 21? EmojiParser.parseToUnicode(":cloud:"): EmojiParser.parseToUnicode(":partly_sunny:");
             case "дождь" -> EmojiParser.parseToUnicode("\uD83C\uDF27");
             default -> "";
         };
