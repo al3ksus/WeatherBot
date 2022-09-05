@@ -40,8 +40,14 @@ public class BotStateHandler {
         if(botState.equals(BotState.SETCITY) || botState.equals(BotState.SETDEFAULTCITY)) {
             return handleSetCity(chatId, messageText, botState);
         }
-        else {
+        else if (botState.equals(BotState.GETWEATHERDEFAULT)){
+            return handleGetWeatherDefault(chatId, messageText);
+        }
+        else if (botState.equals(BotState.GETWEATHER)){
             return handleGetWeather(chatId, messageText);
+        }
+        else {
+            return null;
         }
     }
 
@@ -84,31 +90,40 @@ public class BotStateHandler {
         if (messageText.equals("CURRENTWEATHER")) {
             MainWeather mainWeather;
 
-            if (city != null) {
-                mainWeather = weatherService.getCurrentWeather(city.getLat(), city.getLon());
-                city = null;
-                return new SendMessage(String.valueOf(chatId), messageGenerator.generateCurrentWeatherMessage(mainWeather, cityName));
-            }
-            else {
-                DefaultCity defaultCity = chatService.getByChatId(chatId).getDefaultCity();
-                mainWeather = weatherService.getCurrentWeather(defaultCity.getLat(), defaultCity.getLon());
-                return new SendMessage(String.valueOf(chatId), messageGenerator.generateCurrentWeatherMessage(mainWeather, defaultCity.getName()));
-            }
+            mainWeather = weatherService.getCurrentWeather(city.getLat(), city.getLon());
+            city = null;
+            return new SendMessage(String.valueOf(chatId), messageGenerator.generateCurrentWeatherMessage(mainWeather, cityName));
         }
-        else {
+        else if (messageText.equals("FORECAST")) {
             Forecast forecast;
 
-            if (city != null) {
-                forecast = weatherService.getForecast(city.getLat(), city.getLon());
-                city = null;
-                return new SendMessage(String.valueOf(chatId), messageGenerator.generateForecastMessage(forecast, cityName));
-            }
-            else {
-                DefaultCity defaultCity = chatService.getByChatId(chatId).getDefaultCity();
-                forecast = weatherService.getForecast(defaultCity.getLat(), defaultCity.getLon());
-                return new SendMessage(String.valueOf(chatId), messageGenerator.generateForecastMessage(forecast, defaultCity.getName()));
+            forecast = weatherService.getForecast(city.getLat(), city.getLon());
+            city = null;
+            return new SendMessage(String.valueOf(chatId), messageGenerator.generateForecastMessage(forecast, cityName));
+        }
+        else {
+            return new SendMessage(String.valueOf(chatId), messageGenerator.generateGetInstructionMessage());
+        }
+    }
 
-            }
+    private SendMessage handleGetWeatherDefault(Long chatId, String messageText) {
+        chatService.setBotState(chatId, BotState.DEFAULT);
+        DefaultCity defaultCity = chatService.getByChatId(chatId).getDefaultCity();
+
+        if (messageText.equals("CURRENTWEATHER")) {
+            MainWeather mainWeather;
+
+            mainWeather = weatherService.getCurrentWeather(defaultCity.getLat(), defaultCity.getLon());
+            return new SendMessage(String.valueOf(chatId), messageGenerator.generateCurrentWeatherMessage(mainWeather, defaultCity.getName()));
+        }
+        else if (messageText.equals("FORECAST")) {
+            Forecast forecast;
+
+            forecast = weatherService.getForecast(defaultCity.getLat(), defaultCity.getLon());
+            return new SendMessage(String.valueOf(chatId), messageGenerator.generateForecastMessage(forecast, defaultCity.getName()));
+        }
+        else {
+            return new SendMessage(String.valueOf(chatId), messageGenerator.generateGetInstructionMessage());
         }
     }
 }

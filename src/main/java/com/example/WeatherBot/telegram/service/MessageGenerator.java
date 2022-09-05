@@ -34,11 +34,15 @@ public class MessageGenerator {
         return "Я могу показывать погоду только в городах России";
     }
 
+    public String generateGetInstructionMessage() {
+        return "Чтобы увидеть список комманд используйте /help";
+    }
+
     public String generateCurrentWeatherMessage(MainWeather mainWeather, String city) {
 
         DecimalFormat decimalFormat = new DecimalFormat("#");
         return "В городе " + city
-                + " " + mainWeather.getWeather().get(0).getDescription()
+                + " " + mainWeather.getWeather().get(0).getDescription() + " "
                 + getWeatherEmoji(mainWeather.getWeather().get(0).getDescription()) +",\n"
                 + "температра воздуха " + decimalFormat.format(mainWeather.getMain().getTemp()) + " \u00B0С,\n"
                 + "ощущается как " + decimalFormat.format(mainWeather.getMain().getFeels_like()) + " \u00B0С,\n"

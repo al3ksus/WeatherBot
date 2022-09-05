@@ -71,6 +71,7 @@ public class CommandHandler {
         SendMessage sendMessage;
 
         if (city != null) {
+            chatService.setBotState(chatId, BotState.GETWEATHERDEFAULT);
             sendMessage = new SendMessage(String.valueOf(chatId), messageGenerator.generateWeatherMessage());
             sendMessage.setReplyMarkup(keyBoardService.getWeatherButtonRow());
         }
@@ -78,6 +79,7 @@ public class CommandHandler {
             sendMessage = new SendMessage(String.valueOf(chatId), messageGenerator.generateNoDefaultCityMessage());
             sendMessage.setReplyMarkup(keyBoardService.getButton("Выбрать город", "/setDefaultCity"));
         }
+
         return sendMessage;
     }
 

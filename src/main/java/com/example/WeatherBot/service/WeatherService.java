@@ -5,14 +5,12 @@ import com.example.WeatherBot.model.weather.Forecast;
 import com.example.WeatherBot.model.weather.MainWeather;
 import com.example.WeatherBot.utilit.Link;
 import com.google.gson.Gson;
-import com.vdurmont.emoji.EmojiParser;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.Calendar;
 
 @Service
 public class WeatherService {
@@ -27,8 +25,7 @@ public class WeatherService {
         MainWeather mainWeather;
 
         try {
-            connection = (HttpURLConnection) new URL( Link.currentWeatherLink + lat + "&lon=" + lon + "&lang=ru&appid=" + API_KEY + "&units=metric").openConnection();
-
+            connection = (HttpURLConnection) new URL( String.format(Link.currentWeatherLink, lat, lon, API_KEY)).openConnection();
             connection.setRequestMethod("GET");
             connection.connect();
 
@@ -50,7 +47,7 @@ public class WeatherService {
         return mainWeather;
     }
 
-    public CityInfo[] isCityExist(String cityTitle) {
+    public CityInfo[] isCityExist(String cityName) {
 
         HttpURLConnection connection;
 
@@ -59,8 +56,7 @@ public class WeatherService {
         CityInfo[] cityInfo;
 
         try {
-            connection = (HttpURLConnection) new URL(Link.geocodingLink + cityTitle + "&limit=10&appid=" + API_KEY + "&units=metric").openConnection();
-
+            connection = (HttpURLConnection) new URL( String.format(Link.geocodingLink, cityName, API_KEY)).openConnection();
             connection.setRequestMethod("GET");
             connection.connect();
 
@@ -88,8 +84,7 @@ public class WeatherService {
         Forecast forecast;
 
         try {
-            connection = (HttpURLConnection) new URL( Link.forecastLink + lat + "&lon=" + lon + "&lang=ru&appid=" + API_KEY + "&units=metric").openConnection();
-
+            connection = (HttpURLConnection) new URL( String.format(Link.forecastLink, lat, lon, API_KEY)).openConnection();
             connection.setRequestMethod("GET");
             connection.connect();
 

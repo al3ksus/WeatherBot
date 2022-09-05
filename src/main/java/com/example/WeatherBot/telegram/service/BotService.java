@@ -39,11 +39,21 @@ public class BotService {
         Long chatId = null;
 
         if (update.hasMessage()) {
-            messageText = update.getMessage().getText().toUpperCase();
+
             chatId = update.getMessage().getChatId();
-        } else if (update.hasCallbackQuery()) {
+
+            if (!update.getMessage().hasText()) {
+                return new SendMessage(String.valueOf(chatId), messageGenerator.generateGetInstructionMessage());
+            }
+
+            messageText = update.getMessage().getText().toUpperCase();
+        }
+        else if (update.hasCallbackQuery()) {
             messageText = update.getCallbackQuery().getData().toUpperCase();
             chatId = update.getCallbackQuery().getMessage().getChatId();
+        }
+        else {
+            return new SendMessage(String.valueOf(chatId), messageGenerator.generateGetInstructionMessage());
         }
 
         if (!chatService.isChatExist(chatId)) {
@@ -52,11 +62,11 @@ public class BotService {
             sendMessage.setReplyMarkup(keyBoardService.getButton("Выбрать город", "/setDefaultCity"));
             return sendMessage;
         } else {
-            return handleMessage(update, messageText, chatId);
+            return handleMessage(messageText, chatId);
         }
     }
 
-    public SendMessage handleMessage(Update update, String messageText, Long chatId) {
+    public SendMessage handleMessage(String messageText, Long chatId) {
 
         if (messageText.charAt(0) == '/') {
 

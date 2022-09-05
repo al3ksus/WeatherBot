@@ -20,15 +20,6 @@ public class TelegramBot extends TelegramLongPollingBot {
     private BotConfig botConfig;
 
     @Autowired
-    private MessageGenerator messageGenerator;
-
-    @Autowired
-    private ChatService chatService;
-
-    @Autowired
-    private WeatherService weatherService;
-
-    @Autowired
     private BotService botService;
 
 
@@ -46,13 +37,14 @@ public class TelegramBot extends TelegramLongPollingBot {
     public void onUpdateReceived(Update update) {
 
         try {
-            execute(botService.handleUpdate(update));
-        } catch (TelegramApiException e) {
-            try {
-                execute(new SendMessage(String.valueOf(update.getMessage().getChatId()), "Чтобы увидеть список комманд используйте /help"));
-            } catch (TelegramApiException ex) {
-                ex.printStackTrace();
+            SendMessage sendMessage = botService.handleUpdate(update);
+
+            if (sendMessage != null) {
+                execute(sendMessage);
             }
+        } catch (TelegramApiException e) {
+                e.printStackTrace();
         }
     }
 }
+
