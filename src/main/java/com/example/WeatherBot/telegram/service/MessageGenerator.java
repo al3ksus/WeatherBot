@@ -2,6 +2,7 @@ package com.example.WeatherBot.telegram.service;
 
 import com.example.WeatherBot.model.weather.Forecast;
 import com.example.WeatherBot.model.weather.MainWeather;
+import com.vdurmont.emoji.EmojiParser;
 import org.springframework.stereotype.Service;
 
 import java.text.DecimalFormat;
@@ -37,7 +38,8 @@ public class MessageGenerator {
 
         DecimalFormat decimalFormat = new DecimalFormat("#");
         return "В городе " + city
-                + " " + mainWeather.getWeather().get(0).getDescription() + ",\n"
+                + " " + mainWeather.getWeather().get(0).getDescription()
+                + getWeatherEmoji(mainWeather.getWeather().get(0).getDescription()) +",\n"
                 + "температра воздуха " + decimalFormat.format(mainWeather.getMain().getTemp()) + " \u00B0С,\n"
                 + "ощущается как " + decimalFormat.format(mainWeather.getMain().getFeels_like()) + " \u00B0С,\n"
                 + "скорость ветра " + decimalFormat.format(mainWeather.getWind().getSpeed()) + " м/c";
@@ -65,6 +67,7 @@ public class MessageGenerator {
         int prevDay = -1;
         int day;
         int month;
+        int hour;
         StringBuilder forecastStr = new StringBuilder();
         forecastStr.append(cityName)
                 .append("\nВремя    описание    температура    ветер\n");
@@ -82,9 +85,10 @@ public class MessageGenerator {
                         .append("\n\n");
             }
 
-            forecastStr.append(date.get(Calendar.HOUR_OF_DAY))
+            hour = date.get(Calendar.HOUR_OF_DAY);
+            forecastStr.append(hour < 10? "0" + hour: hour)
                     .append(":00    ")
-                    .append(weather.getWeather().get(0).getDescription())
+                    .append(getWeatherEmoji(weather.getWeather().get(0).getDescription()))
                     .append("    ")
                     .append(decimalFormat.format(weather.getMain().getTemp()))
                     .append(" \u00B0С    ")
@@ -102,5 +106,18 @@ public class MessageGenerator {
                 /setdefaultcity выбрать новый город по умолчанию
                 /setcity выбрать город, чтобы узнать в нем погоду
                 /getweather узнать погоду в городе по умолчанию""";
+    }
+
+    public String getWeatherEmoji(String description) {
+        return switch (description) {
+            case "ясно" -> EmojiParser.parseToUnicode(":sunny:");
+            case "пасмурно" -> EmojiParser.parseToUnicode(":cloud:");
+            case "небольшая облачность" -> EmojiParser.parseToUnicode("\uD83C\uDF24");
+            case "облачно с прояснениями" -> EmojiParser.parseToUnicode(":white_sun_behind_cloud:");
+            case "небольшой дождь" -> EmojiParser.parseToUnicode("\uD83C\uDF26");
+            case "переменная облачность" -> EmojiParser.parseToUnicode(":partly_sunny:");
+            case "дождь" -> EmojiParser.parseToUnicode("\uD83C\uDF27");
+            default -> "";
+        };
     }
 }
