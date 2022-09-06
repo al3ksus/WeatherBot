@@ -112,7 +112,10 @@ public class MessageGenerator {
                 /start начать использовать бота
                 /setdefaultcity выбрать новый город по умолчанию
                 /setcity выбрать город, чтобы узнать в нем погоду
-                /getweather узнать погоду в городе по умолчанию""";
+                /getweather узнать погоду в городе по умолчанию
+                
+                по поводу вопросов и предложений пишите на почту
+                aleksejukrainskij7554@gmail.com""";
     }
 
     public String getWeatherEmoji(String description, int hour) {
