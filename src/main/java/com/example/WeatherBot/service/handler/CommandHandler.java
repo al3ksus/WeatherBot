@@ -49,24 +49,24 @@ public class CommandHandler {
         }
     }
 
-    public SendMessage handleStart(Long chatId) {
+    private SendMessage handleStart(Long chatId) {
         chatService.setBotState(chatId, BotState.DEFAULT);
         SendMessage sendMessage = new SendMessage(String.valueOf(chatId), messageGenerator.generateStartMessage());
         sendMessage.setReplyMarkup(keyBoardService.getButton("Выбрать город", "/setDefaultCity"));
         return sendMessage;
     }
 
-    public SendMessage handleSetCity(Long chatId) {
+    private SendMessage handleSetCity(Long chatId) {
         chatService.setBotState(chatId, BotState.SETCITY);
         return new SendMessage(String.valueOf(chatId), messageGenerator.generateSetCityMessage());
     }
 
-    public SendMessage handleSetDefaultCity(Long chatId) {
+    private SendMessage handleSetDefaultCity(Long chatId) {
         chatService.setBotState(chatId, BotState.SETDEFAULTCITY);
         return new SendMessage(String.valueOf(chatId), messageGenerator.generateSetCityMessage());
     }
 
-    public SendMessage handleGetWeather(Long chatId) {
+    private SendMessage handleGetWeather(Long chatId) {
         DefaultCity city = chatService.getByChatId(chatId).getDefaultCity();
         SendMessage sendMessage;
 

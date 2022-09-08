@@ -51,7 +51,7 @@ public class BotStateHandler {
         }
     }
 
-    public SendMessage handleSetCity(Long chatId, String messageText, BotState botState) {
+    private SendMessage handleSetCity(Long chatId, String messageText, BotState botState) {
         CityInfo[] cityInfo = weatherService.isCityExist(messageText);
 
         if (cityInfo.length != 0) {
@@ -84,7 +84,7 @@ public class BotStateHandler {
         }
     }
 
-    public SendMessage handleGetWeather(Long chatId, String messageText) {
+    private SendMessage handleGetWeather(Long chatId, String messageText) {
         chatService.setBotState(chatId, BotState.DEFAULT);
 
         if (messageText.equals("CURRENTWEATHER")) {
