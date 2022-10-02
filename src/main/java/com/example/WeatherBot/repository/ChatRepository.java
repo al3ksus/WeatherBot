@@ -1,6 +1,6 @@
 package com.example.WeatherBot.repository;
 
-import com.example.WeatherBot.model.chat.Chat;
+import com.example.WeatherBot.model.DBModel.Chat;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

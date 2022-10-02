@@ -1,7 +1,7 @@
 package com.example.WeatherBot.telegram.service;
 
-import com.example.WeatherBot.model.weather.Forecast;
-import com.example.WeatherBot.model.weather.MainWeather;
+import com.example.WeatherBot.model.jsonModel.weather.Forecast;
+import com.example.WeatherBot.model.jsonModel.weather.MainWeather;
 import com.vdurmont.emoji.EmojiParser;
 import org.springframework.stereotype.Service;
 

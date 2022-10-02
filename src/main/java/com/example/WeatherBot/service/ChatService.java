@@ -1,13 +1,14 @@
 package com.example.WeatherBot.service;
 
-import com.example.WeatherBot.model.BotState;
-import com.example.WeatherBot.model.chat.Chat;
-import com.example.WeatherBot.model.chat.DefaultCity;
+import com.example.WeatherBot.model.enums.BotState;
+import com.example.WeatherBot.model.DBModel.Chat;
+import com.example.WeatherBot.model.DBModel.DefaultCity;
+import com.example.WeatherBot.model.jsonModel.city.City;
 import com.example.WeatherBot.repository.ChatRepository;
-import com.example.WeatherBot.repository.DefaultCityRepository;
-import com.fasterxml.jackson.jaxrs.json.annotation.JSONP;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 public class ChatService {
@@ -16,7 +17,7 @@ public class ChatService {
     private ChatRepository chatRepository;
 
     @Autowired
-    private DefaultCityRepository defaultCityRepository;
+    private DefaultCityService defaultCityService;
 
     public void addChat(Long chatId, BotState botState) {
         chatRepository.save(new Chat(chatId, botState));
@@ -32,8 +33,8 @@ public class ChatService {
         chatRepository.save(chat);
     }
 
-    public void setDefaultCity(Long chatId, String name, double lat, double lon) {
-        Chat chat = chatRepository.getByChatId(chatId);
+    public void setDefaultCity(Long chatId, City city) {
+        /*Chat chat = chatRepository.getByChatId(chatId);
         DefaultCity defaultCity = chat.getDefaultCity();
 
         if (defaultCity == null) {
@@ -47,7 +48,19 @@ public class ChatService {
 
         defaultCityRepository.save(defaultCity);
         chat.setDefaultCity(defaultCity);
+        chatRepository.save(chat);*/
+
+        Chat chat = chatRepository.getByChatId(chatId);
+        Optional<DefaultCity> defaultCity = defaultCityService.findByName(city.getLocal_names().getRu());
+
+        if (defaultCity.isEmpty()) {
+            defaultCity = Optional.of(new DefaultCity(city));
+        }
+
+        chat.setDefaultCity(defaultCity.get());
+        defaultCityService.add(defaultCity.get());
         chatRepository.save(chat);
+
     }
 
     public Chat getByChatId(Long chatId) {

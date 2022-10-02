@@ -1,8 +1,8 @@
 package com.example.WeatherBot.service;
 
-import com.example.WeatherBot.model.city.CityInfo;
-import com.example.WeatherBot.model.weather.Forecast;
-import com.example.WeatherBot.model.weather.MainWeather;
+import com.example.WeatherBot.model.jsonModel.city.City;
+import com.example.WeatherBot.model.jsonModel.weather.Forecast;
+import com.example.WeatherBot.model.jsonModel.weather.MainWeather;
 import com.example.WeatherBot.utilit.Link;
 import com.google.gson.Gson;
 import org.springframework.stereotype.Service;
@@ -47,13 +47,13 @@ public class WeatherService {
         return mainWeather;
     }
 
-    public CityInfo[] isCityExist(String cityName) {
+    public City[] isCityExist(String cityName) {
 
         HttpURLConnection connection;
 
         StringBuilder response = new StringBuilder();
 
-        CityInfo[] cityInfo;
+        City[] city;
 
         try {
             connection = (HttpURLConnection) new URL( String.format(Link.geocodingLink, cityName, API_KEY)).openConnection();
@@ -68,12 +68,12 @@ public class WeatherService {
                 response.append(line);
             }
 
-            cityInfo = new Gson().fromJson(String.valueOf(response), CityInfo[].class);
+            city = new Gson().fromJson(String.valueOf(response), City[].class);
 
         } catch (Throwable cause) {
             return null;
         }
-        return cityInfo;
+        return city;
     }
 
     public Forecast getForecast(double lat, double lon) {

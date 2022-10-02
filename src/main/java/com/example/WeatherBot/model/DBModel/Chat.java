@@ -1,11 +1,10 @@
-package com.example.WeatherBot.model.chat;
+package com.example.WeatherBot.model.DBModel;
 
-import com.example.WeatherBot.model.BotState;
+import com.example.WeatherBot.model.enums.BotState;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.GeneratorType;
 
 import javax.persistence.*;
 
@@ -18,7 +17,7 @@ public class Chat {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false)
+    @Column(nullable = false)
     private Long id;
 
     private Long chatId;

@@ -1,13 +1,12 @@
 package com.example.WeatherBot.telegram.service;
 
-import com.example.WeatherBot.model.BotState;
-import com.example.WeatherBot.model.chat.Chat;
+import com.example.WeatherBot.model.enums.BotState;
+import com.example.WeatherBot.model.DBModel.Chat;
 import com.example.WeatherBot.service.ChatService;
 import com.example.WeatherBot.service.KeyBoardService;
 import com.example.WeatherBot.service.WeatherService;
 import com.example.WeatherBot.service.handler.BotStateHandler;
 import com.example.WeatherBot.service.handler.CommandHandler;
-import com.example.WeatherBot.telegram.service.MessageGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
