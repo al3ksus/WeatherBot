@@ -14,12 +14,16 @@ import javax.persistence.*;
 public class City {
 
     @Transient
-    protected LocalNames local_names;
+    private LocalNames local_names;
 
-    protected double lat;
+    private double lat;
 
-    protected double lon;
+    private double lon;
 
     @Transient
-    protected String country;
+    private String country;
+
+    public void setLocal_names(LocalNames local_names) {
+        this.local_names = local_names;
+    }
 }

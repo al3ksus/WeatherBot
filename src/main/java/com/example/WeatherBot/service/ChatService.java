@@ -1,8 +1,10 @@
 package com.example.WeatherBot.service;
 
+import com.example.WeatherBot.model.DBModel.DBCity;
 import com.example.WeatherBot.model.enums.BotState;
 import com.example.WeatherBot.model.DBModel.Chat;
-import com.example.WeatherBot.model.DBModel.DefaultCity;
+
+import com.example.WeatherBot.model.enums.CityState;
 import com.example.WeatherBot.model.jsonModel.city.City;
 import com.example.WeatherBot.repository.ChatRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +19,7 @@ public class ChatService {
     private ChatRepository chatRepository;
 
     @Autowired
-    private DefaultCityService defaultCityService;
+    private DBCityService dbCityService;
 
     public void addChat(Long chatId, BotState botState) {
         chatRepository.save(new Chat(chatId, botState));
@@ -51,16 +53,44 @@ public class ChatService {
         chatRepository.save(chat);*/
 
         Chat chat = chatRepository.getByChatId(chatId);
-        Optional<DefaultCity> defaultCity = defaultCityService.findByName(city.getLocal_names().getRu());
+        Optional<DBCity> dbCity = dbCityService.findByNameAndState(city.getLocal_names().getRu(), CityState.DEFAULT);
 
-        if (defaultCity.isEmpty()) {
-            defaultCity = Optional.of(new DefaultCity(city));
+        if (dbCity.isEmpty()) {
+            dbCity = Optional.of(new DBCity(city, CityState.DEFAULT));
         }
 
-        chat.setDefaultCity(defaultCity.get());
-        defaultCityService.add(defaultCity.get());
+        chat.setDefaultCity(dbCity.get());
+        dbCityService.add(dbCity.get());
         chatRepository.save(chat);
+    }
 
+    public void setTemporaryCity(Long chatId, City city) {
+        /*Chat chat = chatRepository.getByChatId(chatId);
+        DefaultCity defaultCity = chat.getDefaultCity();
+
+        if (defaultCity == null) {
+            defaultCity = new DefaultCity(name, lat, lon);
+        }
+        else {
+            defaultCity.setName(name);
+            defaultCity.setLat(lat);
+            defaultCity.setLon(lon);
+        }
+
+        defaultCityRepository.save(defaultCity);
+        chat.setDefaultCity(defaultCity);
+        chatRepository.save(chat);*/
+
+        Chat chat = chatRepository.getByChatId(chatId);
+        Optional<DBCity> dbCity = dbCityService.findByNameAndState(city.getLocal_names().getRu(), CityState.TEMPORARY);
+
+        if (dbCity.isEmpty()) {
+            dbCity = Optional.of(new DBCity(city, CityState.TEMPORARY));
+        }
+
+        chat.setTemporaryCity(dbCity.get());
+        dbCityService.add(dbCity.get());
+        chatRepository.save(chat);
     }
 
     public Chat getByChatId(Long chatId) {

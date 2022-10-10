@@ -6,6 +6,7 @@ import com.example.WeatherBot.telegram.service.BotService;
 import com.example.WeatherBot.service.WeatherService;
 import com.example.WeatherBot.telegram.service.MessageGenerator;
 import com.vdurmont.emoji.EmojiParser;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
@@ -14,13 +15,12 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 @Component
+@AllArgsConstructor
 public class TelegramBot extends TelegramLongPollingBot {
 
-    @Autowired
-    private BotConfig botConfig;
+    private final BotConfig botConfig;
 
-    @Autowired
-    private BotService botService;
+    private final BotService botService;
 
 
     @Override

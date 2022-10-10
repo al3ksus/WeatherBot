@@ -3,11 +3,9 @@ package com.example.WeatherBot.telegram.service;
 import com.example.WeatherBot.model.enums.BotState;
 import com.example.WeatherBot.model.DBModel.Chat;
 import com.example.WeatherBot.service.ChatService;
-import com.example.WeatherBot.service.KeyBoardService;
-import com.example.WeatherBot.service.WeatherService;
 import com.example.WeatherBot.service.handler.BotStateHandler;
+import com.example.WeatherBot.service.handler.CallbackQueryHandler;
 import com.example.WeatherBot.service.handler.CommandHandler;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -15,23 +13,23 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 @Component
 public class BotService {
 
-    @Autowired
-    private ChatService chatService;
+    private final ChatService chatService;
 
-    @Autowired
-    private MessageGenerator messageGenerator;
+    private final MessageGenerator messageGenerator;
 
-    @Autowired
-    private WeatherService weatherService;
+    private final CommandHandler commandHandler;
 
-    @Autowired
-    private KeyBoardService keyBoardService;
+    private final BotStateHandler botStateHandler;
 
-    @Autowired
-    private CommandHandler commandHandler;
+    private final CallbackQueryHandler callbackQueryHandler;
 
-    @Autowired
-    private BotStateHandler botStateHandler;
+    public BotService(ChatService chatService, MessageGenerator messageGenerator, CommandHandler commandHandler, BotStateHandler botStateHandler, CallbackQueryHandler callbackQueryHandler) {
+        this.chatService = chatService;
+        this.messageGenerator = messageGenerator;
+        this.commandHandler = commandHandler;
+        this.botStateHandler = botStateHandler;
+        this.callbackQueryHandler = callbackQueryHandler;
+    }
 
     public SendMessage handleUpdate(Update update) {
         String messageText = "";
@@ -48,8 +46,10 @@ public class BotService {
             messageText = update.getMessage().getText().toUpperCase();
         }
         else if (update.hasCallbackQuery()) {
-            messageText = update.getCallbackQuery().getData().toUpperCase();
+            messageText = update.getCallbackQuery().getData();
             chatId = update.getCallbackQuery().getMessage().getChatId();
+
+            return callbackQueryHandler.handleCallbackQuery(chatId, messageText);
         }
         else {
             return new SendMessage(String.valueOf(chatId), messageGenerator.generateGetInstructionMessage());
@@ -57,9 +57,7 @@ public class BotService {
 
         if (!chatService.isChatExist(chatId)) {
             chatService.addChat(chatId, BotState.DEFAULT);
-            SendMessage sendMessage = new SendMessage(String.valueOf(chatId), messageGenerator.generateStartMessage());
-            sendMessage.setReplyMarkup(keyBoardService.getButton("Выбрать город", "/setDefaultCity"));
-            return sendMessage;
+            return new SendMessage(String.valueOf(chatId), messageGenerator.generateStartMessage());
         } else {
             return handleMessage(messageText, chatId);
         }

@@ -1,5 +1,6 @@
 package com.example.WeatherBot.model.DBModel;
 
+import com.example.WeatherBot.model.enums.CityState;
 import com.example.WeatherBot.model.jsonModel.city.City;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -13,7 +14,7 @@ import javax.persistence.*;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class DefaultCity {
+public class DBCity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,9 +26,12 @@ public class DefaultCity {
 
     private String name;
 
+    @Enumerated(EnumType.STRING)
+    private CityState cityState;
 
-    public DefaultCity(City city) {
+    public DBCity(City city, CityState cityState) {
         this.city = city;
+        this.cityState = cityState;
         name = city.getLocal_names().getRu();
     }
 }

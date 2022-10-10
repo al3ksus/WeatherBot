@@ -1,29 +1,23 @@
 package com.example.WeatherBot.service.handler;
 
+import com.example.WeatherBot.model.DBModel.DBCity;
 import com.example.WeatherBot.model.enums.BotState;
-import com.example.WeatherBot.model.DBModel.DefaultCity;
 import com.example.WeatherBot.service.ChatService;
 import com.example.WeatherBot.service.KeyBoardService;
-import com.example.WeatherBot.service.WeatherService;
 import com.example.WeatherBot.telegram.service.MessageGenerator;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 
 @Component
+@AllArgsConstructor
 public class CommandHandler {
 
-    @Autowired
-    private ChatService chatService;
+    private final ChatService chatService;
 
-    @Autowired
-    private MessageGenerator messageGenerator;
+    private final MessageGenerator messageGenerator;
 
-    @Autowired
-    private KeyBoardService keyBoardService;
-
-    @Autowired
-    private WeatherService weatherService;
+    private final KeyBoardService keyBoardService;
 
     public SendMessage handleCommand(Long chatId, String command) {
 
@@ -51,9 +45,7 @@ public class CommandHandler {
 
     private SendMessage handleStart(Long chatId) {
         chatService.setBotState(chatId, BotState.DEFAULT);
-        SendMessage sendMessage = new SendMessage(String.valueOf(chatId), messageGenerator.generateStartMessage());
-        sendMessage.setReplyMarkup(keyBoardService.getButton("Выбрать город", "/setDefaultCity"));
-        return sendMessage;
+        return new SendMessage(String.valueOf(chatId), messageGenerator.generateStartMessage());
     }
 
     private SendMessage handleSetCity(Long chatId) {
@@ -67,7 +59,7 @@ public class CommandHandler {
     }
 
     private SendMessage handleGetWeather(Long chatId) {
-        DefaultCity city = chatService.getByChatId(chatId).getDefaultCity();
+        DBCity city = chatService.getByChatId(chatId).getDefaultCity();
         SendMessage sendMessage;
 
         if (city != null) {
@@ -76,8 +68,7 @@ public class CommandHandler {
             sendMessage.setReplyMarkup(keyBoardService.getWeatherButtonRow());
         }
         else {
-            sendMessage = new SendMessage(String.valueOf(chatId), messageGenerator.generateNoDefaultCityMessage());
-            sendMessage.setReplyMarkup(keyBoardService.getButton("Выбрать город", "/setDefaultCity"));
+            return new SendMessage(String.valueOf(chatId), messageGenerator.generateNoDefaultCityMessage());
         }
 
         return sendMessage;

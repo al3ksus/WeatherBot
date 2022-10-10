@@ -1,15 +1,17 @@
 package com.example.WeatherBot.model.jsonModel.city;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Objects;
 
-@Component
 @Getter
+@AllArgsConstructor
 public class LocalNames {
 
-    private String ru;
+    private final String ru;
 
     @Override
     public boolean equals(Object o) {

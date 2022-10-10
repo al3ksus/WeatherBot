@@ -26,7 +26,10 @@ public class Chat {
     private BotState botState;
 
     @OneToOne
-    private DefaultCity defaultCity;
+    private DBCity defaultCity;
+
+    @OneToOne
+    private DBCity temporaryCity;
 
     public Chat(Long chatId, BotState botState) {
         this.chatId = chatId;
