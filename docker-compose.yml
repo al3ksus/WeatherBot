@@ -1,0 +1,19 @@
+version: "3.0"
+
+services:
+
+  database:
+    image: postgres
+    ports:
+      - "4000:5432"
+    environment:
+      - POSTGRES_PASSWORD=7554
+      - POSTGRES_DB=weather_bot
+
+  weather-bot-app:
+     image: registry.gitlab.com/al3ksus/weatherbot
+     ports:
+       - "3000:3000"
+     environment:
+      - TZ=Europe/Moscow
+     network_mode: host

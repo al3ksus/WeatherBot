@@ -38,7 +38,6 @@ public class SpringConfig {
             }
         }
 
-        dbCityList.stream().filter(city -> idSet.contains(city.getId()));
-        dbCityList.forEach(city -> dbCityService.delete(city.getId()));
+        dbCityList.stream().filter(city -> !idSet.contains(city.getId())).forEach(city -> dbCityService.delete(city.getId()));
     }
 }

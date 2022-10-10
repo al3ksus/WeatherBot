@@ -14,7 +14,7 @@
 	<name>WeatherBot</name>
 	<description>Demo project for Spring Boot</description>
 	<properties>
-		<java.version>18</java.version>
+		<java.version>17</java.version>
 	</properties>
 	<dependencies>
 
@@ -67,6 +67,7 @@
     </dependencies>
 
 	<build>
+		<defaultGoal>package</defaultGoal>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>

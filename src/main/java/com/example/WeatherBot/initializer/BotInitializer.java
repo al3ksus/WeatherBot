@@ -1,6 +1,7 @@
 package com.example.WeatherBot.initializer;
 
 import com.example.WeatherBot.telegram.TelegramBot;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
@@ -10,10 +11,10 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 
 @Component
+@AllArgsConstructor
 public class BotInitializer {
 
-    @Autowired
-    TelegramBot telegramBot;
+    private final TelegramBot telegramBot;
 
     @EventListener({ContextRefreshedEvent.class})
     public void init() throws TelegramApiException {

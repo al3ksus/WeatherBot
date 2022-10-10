@@ -6,11 +6,13 @@ import com.example.WeatherBot.service.ChatService;
 import com.example.WeatherBot.service.handler.BotStateHandler;
 import com.example.WeatherBot.service.handler.CallbackQueryHandler;
 import com.example.WeatherBot.service.handler.CommandHandler;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 @Component
+@AllArgsConstructor
 public class BotService {
 
     private final ChatService chatService;
@@ -22,14 +24,6 @@ public class BotService {
     private final BotStateHandler botStateHandler;
 
     private final CallbackQueryHandler callbackQueryHandler;
-
-    public BotService(ChatService chatService, MessageGenerator messageGenerator, CommandHandler commandHandler, BotStateHandler botStateHandler, CallbackQueryHandler callbackQueryHandler) {
-        this.chatService = chatService;
-        this.messageGenerator = messageGenerator;
-        this.commandHandler = commandHandler;
-        this.botStateHandler = botStateHandler;
-        this.callbackQueryHandler = callbackQueryHandler;
-    }
 
     public SendMessage handleUpdate(Update update) {
         String messageText = "";

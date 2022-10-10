@@ -22,6 +22,11 @@ public class CallbackQueryHandler {
     private final MessageGenerator messageGenerator;
 
     public SendMessage handleCallbackQuery(Long chatId, String data) {
+        BotState botState = chatService.getByChatId(chatId).getBotState();
+
+        if (!(botState.equals(BotState.GET_WEATHER) || botState.equals(BotState.GET_WEATHER_DEFAULT))) {
+            return null;
+        }
 
         return switch (data) {
             case "currentWeather" -> handleCurrentWeather(chatId);

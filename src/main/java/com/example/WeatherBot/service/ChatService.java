@@ -8,7 +8,6 @@ import com.example.WeatherBot.model.enums.CityState;
 import com.example.WeatherBot.model.jsonModel.city.City;
 import com.example.WeatherBot.repository.ChatRepository;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -37,21 +36,6 @@ public class ChatService {
     }
 
     public void setDefaultCity(Long chatId, City city) {
-        /*Chat chat = chatRepository.getByChatId(chatId);
-        DefaultCity defaultCity = chat.getDefaultCity();
-
-        if (defaultCity == null) {
-            defaultCity = new DefaultCity(name, lat, lon);
-        }
-        else {
-            defaultCity.setName(name);
-            defaultCity.setLat(lat);
-            defaultCity.setLon(lon);
-        }
-
-        defaultCityRepository.save(defaultCity);
-        chat.setDefaultCity(defaultCity);
-        chatRepository.save(chat);*/
 
         Chat chat = chatRepository.getByChatId(chatId);
         Optional<DBCity> dbCity = dbCityService.findByNameAndState(city.getLocal_names().getRu(), CityState.DEFAULT);
@@ -66,21 +50,6 @@ public class ChatService {
     }
 
     public void setTemporaryCity(Long chatId, City city) {
-        /*Chat chat = chatRepository.getByChatId(chatId);
-        DefaultCity defaultCity = chat.getDefaultCity();
-
-        if (defaultCity == null) {
-            defaultCity = new DefaultCity(name, lat, lon);
-        }
-        else {
-            defaultCity.setName(name);
-            defaultCity.setLat(lat);
-            defaultCity.setLon(lon);
-        }
-
-        defaultCityRepository.save(defaultCity);
-        chat.setDefaultCity(defaultCity);
-        chatRepository.save(chat);*/
 
         Chat chat = chatRepository.getByChatId(chatId);
         Optional<DBCity> dbCity = dbCityService.findByNameAndState(city.getLocal_names().getRu(), CityState.TEMPORARY);

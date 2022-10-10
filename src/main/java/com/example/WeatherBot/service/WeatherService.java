@@ -8,8 +8,10 @@ import com.google.gson.Gson;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.ProtocolException;
 import java.net.URL;
 
 @Service
@@ -18,92 +20,57 @@ public class WeatherService {
     private final static String API_KEY = "f567de296dab0b7026ca5ad7072e46f6";
 
     public MainWeather getCurrentWeather(double lat, double lon) {
-        HttpURLConnection connection;
-
-        StringBuilder response = new StringBuilder();
-
-        MainWeather mainWeather;
+        String response;
 
         try {
-            connection = (HttpURLConnection) new URL( String.format(Link.currentWeatherLink, lat, lon, API_KEY)).openConnection();
-            connection.setRequestMethod("GET");
-            connection.connect();
-
-            BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-
-            String  line;
-
-            while((line = reader.readLine()) != null) {
-                response.append(line);
-            }
-
-            Gson gson = new Gson();
-            mainWeather = gson.fromJson(String.valueOf(response), MainWeather.class);
-
-        } catch (Throwable cause) {
-            return null;
+            response = getURLResponse(String.format(Link.currentWeatherLink, lat, lon, API_KEY ));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
 
-        return mainWeather;
+        return new Gson().fromJson(String.valueOf(response), MainWeather.class);
     }
 
-    public City[] isCityExist(String cityName) {
-
-        HttpURLConnection connection;
-
-        StringBuilder response = new StringBuilder();
-
-        City[] city;
+    public City[] getCityList(String cityName) {
+        String response;
 
         try {
-            connection = (HttpURLConnection) new URL( String.format(Link.geocodingLink, cityName, API_KEY)).openConnection();
-            connection.setRequestMethod("GET");
-            connection.connect();
-
-            BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-
-            String line;
-
-            while ((line = reader.readLine()) != null) {
-                response.append(line);
-            }
-
-            city = new Gson().fromJson(String.valueOf(response), City[].class);
-
-        } catch (Throwable cause) {
-            return null;
+            response = getURLResponse(String.format(Link.geocodingLink, cityName, API_KEY));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
-        return city;
+
+        return new Gson().fromJson(String.valueOf(response), City[].class);
     }
 
     public Forecast getForecast(double lat, double lon) {
-        HttpURLConnection connection;
-
-        StringBuilder response = new StringBuilder();
-
-        Forecast forecast;
+        String response;
 
         try {
-            connection = (HttpURLConnection) new URL( String.format(Link.forecastLink, lat, lon, API_KEY)).openConnection();
-            connection.setRequestMethod("GET");
-            connection.connect();
-
-            BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-
-            String  line;
-
-            while((line = reader.readLine()) != null) {
-                response.append(line);
-            }
-
-            Gson gson = new Gson();
-            forecast = gson.fromJson(String.valueOf(response), Forecast.class);
-
-        } catch (Throwable cause) {
-            return null;
+            response = getURLResponse(String.format(Link.forecastLink, lat, lon, API_KEY));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
 
-        return forecast;
+        return new Gson().fromJson(String.valueOf(response), Forecast.class);
     }
 
+    private static String getURLResponse(String urlAddress) throws IOException {
+        HttpURLConnection connection;
+        StringBuilder response = new StringBuilder();
+
+        connection = (HttpURLConnection) new URL(urlAddress).openConnection();
+        connection.setRequestMethod("GET");
+        connection.connect();
+
+        BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+
+        String line;
+
+        while ((line = reader.readLine()) != null) {
+            response.append(line);
+        }
+
+        return String.valueOf(response);
+    }
 }
