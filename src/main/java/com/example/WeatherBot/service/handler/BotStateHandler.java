@@ -1,11 +1,8 @@
 package com.example.WeatherBot.service.handler;
 
-import com.example.WeatherBot.model.DBModel.DBCity;
 import com.example.WeatherBot.model.enums.BotState;
 import com.example.WeatherBot.model.jsonModel.city.City;
 import com.example.WeatherBot.model.jsonModel.city.LocalNames;
-import com.example.WeatherBot.model.jsonModel.weather.Forecast;
-import com.example.WeatherBot.model.jsonModel.weather.MainWeather;
 import com.example.WeatherBot.service.ChatService;
 import com.example.WeatherBot.service.KeyBoardService;
 import com.example.WeatherBot.telegram.service.MessageGenerator;

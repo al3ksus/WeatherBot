@@ -7,19 +7,20 @@ import com.example.WeatherBot.model.DBModel.Chat;
 import com.example.WeatherBot.model.enums.CityState;
 import com.example.WeatherBot.model.jsonModel.city.City;
 import com.example.WeatherBot.repository.ChatRepository;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
+@AllArgsConstructor
 public class ChatService {
 
-    @Autowired
-    private ChatRepository chatRepository;
+    private final ChatRepository chatRepository;
 
-    @Autowired
-    private DBCityService dbCityService;
+    private final DBCityService dbCityService;
 
     public void addChat(Long chatId, BotState botState) {
         chatRepository.save(new Chat(chatId, botState));
@@ -95,5 +96,9 @@ public class ChatService {
 
     public Chat getByChatId(Long chatId) {
         return chatRepository.getByChatId(chatId);
+    }
+
+    public List<Chat> getList() {
+        return chatRepository.findAll();
     }
 }

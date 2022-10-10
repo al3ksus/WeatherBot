@@ -14,8 +14,7 @@ public class MessageGenerator {
 
     public String generateStartMessage() {
         return "Привет, я умею показывать погоду в городах России.\n" +
-                "Чтобы увидеть инструкцию используйте /help.\n" +
-                "Для начала давайте выберем город по умолчанию";
+                "Чтобы увидеть инструкцию используйте /help.";
     }
 
     public String generateSetCityMessage() {
@@ -54,14 +53,12 @@ public class MessageGenerator {
     }
 
     public String generateDefaultCityMessage(String cityName) {
-        return "Новый город по умолчанию - " + cityName + ".\n"
-                + "Чтобы узнать погоду в городе по умолчанию, используйте команду /getweather."
-                + " Если хотите изменить город по умолчанию, используйте команду /setdefaultcity."
-                + " Используйте команду /setcity, чтобы узнать погоду в другом городе";
+        return "Новый город по умолчанию - " + cityName + ".";
     }
 
     public String generateNoDefaultCityMessage() {
-        return "Эта команда показывает погоду в городе по умолчанию";
+        return "Эта команда показывает погоду в городе по умолчанию." +
+                "Чтобы выбрать город по умолчанию используй команду /setdefaultcity";
     }
 
     public String generateWeatherMessage() {
@@ -109,13 +106,22 @@ public class MessageGenerator {
 
     public String generateHelpMessage() {
         return """
-                /start начать использовать бота
-                /setdefaultcity выбрать новый город по умолчанию
-                /setcity выбрать город, чтобы узнать в нем погоду
-                /getweather узнать погоду в городе по умолчанию
-                
+                Я могу показывать погоду в городах России. Ты можешь узнать
+                текущую погоду или прогноз на 5 дней с шагом в 3 часа.
+                Если есть город, в котором тебе нужно узнавать погоду чаще,
+                чем в остальных, можешь выбрать город по умолчанию и потом,
+                с помощью одной команды сможешь узнавать погоду в этом городе.
+                                
+                Команды:
+                /start    инициализация чата, это можно сделать один раз в начале использования
+                /help    получить подробную информацию о боте
+                /setdefaultcity    выбрать новый город по умолчанию
+                /setcity    выбрать город, чтобы узнать в нем погоду
+                /getweather    узнать погоду в городе по умолчанию
+                                
                 по поводу вопросов и предложений пишите на почту
-                aleksejukrainskij7554@gmail.com""";
+                aleksejukrainskij7554@gmail.com
+                """;
     }
 
     public String getWeatherEmoji(String description, int hour) {
