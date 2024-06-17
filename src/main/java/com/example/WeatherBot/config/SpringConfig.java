@@ -9,9 +9,11 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Configuration
 @EnableScheduling
@@ -24,20 +26,7 @@ public class SpringConfig {
 
     @Scheduled(fixedDelay = 86400000)
     public void cleanDatabase() {
-        Set<Long> idSet = new HashSet<>();
-        List<Chat> chatList = chatService.getList();
-        List<DBCity> dbCityList = dbCityService.getList();
-
-        for (Chat chat : chatList) {
-            if (chat.getDefaultCity() != null) {
-                idSet.add(chat.getDefaultCity().getId());
-            }
-
-            if (chat.getTemporaryCity() != null) {
-                idSet.add(chat.getTemporaryCity().getId());
-            }
-        }
-
-        dbCityList.stream().filter(city -> !idSet.contains(city.getId())).forEach(city -> dbCityService.delete(city.getId()));
+        List<DBCity> unnecessaryCities = dbCityService.getUnnecessaryCities(chatService.getList());
+        unnecessaryCities.forEach(c -> dbCityService.delete(c.getId()));
     }
 }

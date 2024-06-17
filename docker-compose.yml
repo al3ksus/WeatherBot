@@ -5,7 +5,7 @@ services:
   database:
     image: postgres
     ports:
-      - "4000:5432"
+      - "5432:5432"
     environment:
       - POSTGRES_PASSWORD=7554
       - POSTGRES_DB=weather_bot

@@ -1,9 +1,11 @@
 package com.example.WeatherBot.service.handler;
 
+import com.example.WeatherBot.model.DBModel.DBCity;
 import com.example.WeatherBot.model.enums.BotState;
 import com.example.WeatherBot.model.jsonModel.city.City;
 import com.example.WeatherBot.model.jsonModel.city.LocalNames;
 import com.example.WeatherBot.service.ChatService;
+import com.example.WeatherBot.service.DBCityService;
 import com.example.WeatherBot.service.KeyBoardService;
 import com.example.WeatherBot.telegram.service.MessageGenerator;
 import com.example.WeatherBot.service.WeatherService;
@@ -23,6 +25,8 @@ public class BotStateHandler {
     private final MessageGenerator messageGenerator;
 
     private final ChatService chatService;
+
+    private final DBCityService dbCityService;
 
     private final KeyBoardService keyBoardService;
 
@@ -47,17 +51,21 @@ public class BotStateHandler {
                 if (optionalCity.get().getLocal_names() == null) {
                     optionalCity.get().setLocal_names(new LocalNames(messageText.charAt(0) + messageText.substring(1).toLowerCase()));
                 }
+                DBCity dbCity = dbCityService.findByName(
+                        optionalCity.get().getLocal_names().getRu()
+                ).orElse(new DBCity(optionalCity.get()));
+                dbCityService.add(dbCity);
 
                 if(botState.equals(BotState.SET_CITY)) {
                     chatService.setBotState(chatId, BotState.GET_WEATHER);
-                    chatService.setTemporaryCity(chatId, optionalCity.get());
+                    chatService.setTemporaryCity(chatId, dbCity);
                     SendMessage sendMessage = new SendMessage(String.valueOf(chatId), messageGenerator.generateWeatherMessage());
                     sendMessage.setReplyMarkup(keyBoardService.getWeatherButtonRow());
                     return sendMessage;
                 }
                 else {
                     chatService.setBotState(chatId, BotState.DEFAULT);
-                    chatService.setDefaultCity(chatId, optionalCity.get());
+                    chatService.setDefaultCity(chatId, dbCity);
                     return new SendMessage(String.valueOf(chatId), messageGenerator.generateDefaultCityMessage(optionalCity.get().getLocal_names().getRu()));
                 }
             }

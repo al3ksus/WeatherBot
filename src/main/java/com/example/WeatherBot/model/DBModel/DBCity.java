@@ -1,6 +1,5 @@
 package com.example.WeatherBot.model.DBModel;
 
-import com.example.WeatherBot.model.enums.CityState;
 import com.example.WeatherBot.model.jsonModel.city.City;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -26,12 +25,8 @@ public class DBCity {
 
     private String name;
 
-    @Enumerated(EnumType.STRING)
-    private CityState cityState;
-
-    public DBCity(City city, CityState cityState) {
+    public DBCity(City city) {
         this.city = city;
-        this.cityState = cityState;
         name = city.getLocal_names().getRu();
     }
 }
