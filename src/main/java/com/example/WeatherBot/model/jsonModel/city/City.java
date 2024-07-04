@@ -9,7 +9,6 @@ import org.springframework.stereotype.Component;
 
 import javax.persistence.*;
 
-@Embeddable
 @Getter
 public class City {
 

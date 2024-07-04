@@ -1,4 +1,4 @@
-package com.example.WeatherBot.service.handler;
+package com.example.WeatherBot.telegram.handler;
 
 import com.example.WeatherBot.model.DBModel.DBCity;
 import com.example.WeatherBot.model.enums.BotState;
@@ -6,14 +6,14 @@ import com.example.WeatherBot.model.jsonModel.weather.Forecast;
 import com.example.WeatherBot.model.jsonModel.weather.MainWeather;
 import com.example.WeatherBot.service.ChatService;
 import com.example.WeatherBot.service.WeatherService;
-import com.example.WeatherBot.telegram.service.MessageGenerator;
+import com.example.WeatherBot.utilit.MessageGenerator;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 
 @Component
 @AllArgsConstructor
-public class CallbackQueryHandler {
+public class CallbackQueryHandlerImpl implements CallbackQueryHandler {
 
     private final ChatService chatService;
 
@@ -21,6 +21,7 @@ public class CallbackQueryHandler {
 
     private final MessageGenerator messageGenerator;
 
+    @Override
     public SendMessage handleCallbackQuery(Long chatId, String data) {
         BotState botState = chatService.getByChatId(chatId).getBotState();
 
@@ -45,7 +46,7 @@ public class CallbackQueryHandler {
             dbCity = chatService.getByChatId(chatId).getTemporaryCity();
         }
 
-        MainWeather mainWeather = weatherService.getCurrentWeather(dbCity.getCity().getLat(), dbCity.getCity().getLon());
+        MainWeather mainWeather = weatherService.getCurrentWeather(dbCity.getLat(), dbCity.getLon());
         chatService.setBotState(chatId, BotState.DEFAULT);
 
         return new SendMessage(String.valueOf(chatId), messageGenerator.generateCurrentWeatherMessage(mainWeather, dbCity.getName()));
@@ -61,7 +62,7 @@ public class CallbackQueryHandler {
             dbCity = chatService.getByChatId(chatId).getTemporaryCity();
         }
 
-        Forecast forecast = weatherService.getForecast(dbCity.getCity().getLat(), dbCity.getCity().getLon());
+        Forecast forecast = weatherService.getForecast(dbCity.getLat(), dbCity.getLon());
         chatService.setBotState(chatId, BotState.DEFAULT);
 
         return new SendMessage(String.valueOf(chatId), messageGenerator.generateForecastMessage(forecast, dbCity.getName()));

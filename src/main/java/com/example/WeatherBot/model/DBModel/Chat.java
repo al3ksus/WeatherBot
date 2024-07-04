@@ -25,10 +25,10 @@ public class Chat {
     @Enumerated(EnumType.STRING)
     private BotState botState;
 
-    @OneToOne
+    @ManyToOne
     private DBCity defaultCity;
 
-    @OneToOne
+    @ManyToOne
     private DBCity temporaryCity;
 
     public Chat(Long chatId, BotState botState) {

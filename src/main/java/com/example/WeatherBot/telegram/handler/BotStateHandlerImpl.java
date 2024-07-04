@@ -1,14 +1,11 @@
-package com.example.WeatherBot.service.handler;
+package com.example.WeatherBot.telegram.handler;
 
 import com.example.WeatherBot.model.DBModel.DBCity;
 import com.example.WeatherBot.model.enums.BotState;
 import com.example.WeatherBot.model.jsonModel.city.City;
 import com.example.WeatherBot.model.jsonModel.city.LocalNames;
-import com.example.WeatherBot.service.ChatService;
-import com.example.WeatherBot.service.DBCityService;
-import com.example.WeatherBot.service.KeyBoardService;
-import com.example.WeatherBot.telegram.service.MessageGenerator;
-import com.example.WeatherBot.service.WeatherService;
+import com.example.WeatherBot.service.*;
+import com.example.WeatherBot.utilit.MessageGenerator;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -18,7 +15,7 @@ import java.util.Optional;
 
 @Component
 @AllArgsConstructor
-public class BotStateHandler {
+public class BotStateHandlerImpl implements BotStateHandler{
 
     private final WeatherService weatherService;
 
@@ -30,6 +27,7 @@ public class BotStateHandler {
 
     private final KeyBoardService keyBoardService;
 
+    @Override
     public SendMessage handleBotState(Long chatId, String messageText, BotState botState) {
 
         if(botState.equals(BotState.SET_CITY) || botState.equals(BotState.SET_DEFAULT_CITY)) {

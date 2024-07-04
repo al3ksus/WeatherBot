@@ -9,4 +9,5 @@ import java.util.Optional;
 @Repository
 public interface DBCityRepository extends JpaRepository<DBCity, Long> {
     Optional<DBCity> findByName(String name);
+    void deleteByName(String name);
 }

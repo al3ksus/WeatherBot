@@ -1,13 +1,8 @@
 package com.example.WeatherBot.telegram;
 
 import com.example.WeatherBot.config.BotConfig;
-import com.example.WeatherBot.service.ChatService;
-import com.example.WeatherBot.telegram.service.BotService;
-import com.example.WeatherBot.service.WeatherService;
-import com.example.WeatherBot.telegram.service.MessageGenerator;
-import com.vdurmont.emoji.EmojiParser;
+import com.example.WeatherBot.telegram.handler.BotUpdateHandler;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -20,7 +15,7 @@ public class TelegramBot extends TelegramLongPollingBot {
 
     private final BotConfig botConfig;
 
-    private final BotService botService;
+    private final BotUpdateHandler botUpdateHandler;
 
 
     @Override
@@ -37,7 +32,7 @@ public class TelegramBot extends TelegramLongPollingBot {
     public void onUpdateReceived(Update update) {
 
         try {
-            SendMessage sendMessage = botService.handleUpdate(update);
+            SendMessage sendMessage = botUpdateHandler.handleUpdate(update);
 
             if (sendMessage != null) {
                 execute(sendMessage);

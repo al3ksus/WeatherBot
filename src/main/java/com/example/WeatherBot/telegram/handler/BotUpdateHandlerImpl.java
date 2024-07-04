@@ -1,11 +1,9 @@
-package com.example.WeatherBot.telegram.service;
+package com.example.WeatherBot.telegram.handler;
 
 import com.example.WeatherBot.model.enums.BotState;
 import com.example.WeatherBot.model.DBModel.Chat;
 import com.example.WeatherBot.service.ChatService;
-import com.example.WeatherBot.service.handler.BotStateHandler;
-import com.example.WeatherBot.service.handler.CallbackQueryHandler;
-import com.example.WeatherBot.service.handler.CommandHandler;
+import com.example.WeatherBot.utilit.MessageGenerator;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -13,7 +11,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 
 @Component
 @AllArgsConstructor
-public class BotService {
+public class BotUpdateHandlerImpl implements BotUpdateHandler {
 
     private final ChatService chatService;
 
@@ -25,6 +23,7 @@ public class BotService {
 
     private final CallbackQueryHandler callbackQueryHandler;
 
+    @Override
     public SendMessage handleUpdate(Update update) {
         String messageText = "";
         Long chatId = null;
@@ -46,7 +45,7 @@ public class BotService {
             return callbackQueryHandler.handleCallbackQuery(chatId, messageText);
         }
         else {
-            return new SendMessage(String.valueOf(chatId), messageGenerator.generateGetInstructionMessage());
+            return null;
         }
 
         if (!chatService.isChatExist(chatId)) {
@@ -57,7 +56,7 @@ public class BotService {
         }
     }
 
-    public SendMessage handleMessage(String messageText, Long chatId) {
+    private SendMessage handleMessage(String messageText, Long chatId) {
 
         if (messageText.charAt(0) == '/') {
 

@@ -5,72 +5,11 @@ import com.example.WeatherBot.model.jsonModel.weather.Forecast;
 import com.example.WeatherBot.model.jsonModel.weather.MainWeather;
 import com.example.WeatherBot.utilit.Link;
 import com.google.gson.Gson;
-import org.springframework.stereotype.Service;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.ProtocolException;
-import java.net.URL;
 
-@Service
-public class WeatherService {
-
-    private final static String API_KEY = "f567de296dab0b7026ca5ad7072e46f6";
-
-    public MainWeather getCurrentWeather(double lat, double lon) {
-        String response;
-
-        try {
-            response = getURLResponse(String.format(Link.currentWeatherLink, lat, lon, API_KEY ));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-        return new Gson().fromJson(String.valueOf(response), MainWeather.class);
-    }
-
-    public City[] getCityList(String cityName) {
-        String response;
-
-        try {
-            response = getURLResponse(String.format(Link.geocodingLink, cityName, API_KEY));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-        return new Gson().fromJson(String.valueOf(response), City[].class);
-    }
-
-    public Forecast getForecast(double lat, double lon) {
-        String response;
-
-        try {
-            response = getURLResponse(String.format(Link.forecastLink, lat, lon, API_KEY));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-        return new Gson().fromJson(String.valueOf(response), Forecast.class);
-    }
-
-    private static String getURLResponse(String urlAddress) throws IOException {
-        HttpURLConnection connection;
-        StringBuilder response = new StringBuilder();
-
-        connection = (HttpURLConnection) new URL(urlAddress).openConnection();
-        connection.setRequestMethod("GET");
-        connection.connect();
-
-        BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-
-        String line;
-
-        while ((line = reader.readLine()) != null) {
-            response.append(line);
-        }
-
-        return String.valueOf(response);
-    }
+public interface WeatherService {
+    MainWeather getCurrentWeather(double lat, double lon);
+    City[] getCityList(String cityName);
+    Forecast getForecast(double lat, double lon);
 }

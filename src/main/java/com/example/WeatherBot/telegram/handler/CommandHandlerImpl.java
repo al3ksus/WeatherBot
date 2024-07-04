@@ -1,17 +1,17 @@
-package com.example.WeatherBot.service.handler;
+package com.example.WeatherBot.telegram.handler;
 
 import com.example.WeatherBot.model.DBModel.DBCity;
 import com.example.WeatherBot.model.enums.BotState;
 import com.example.WeatherBot.service.ChatService;
 import com.example.WeatherBot.service.KeyBoardService;
-import com.example.WeatherBot.telegram.service.MessageGenerator;
+import com.example.WeatherBot.utilit.MessageGenerator;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 
 @Component
 @AllArgsConstructor
-public class CommandHandler {
+public class CommandHandlerImpl implements CommandHandler {
 
     private final ChatService chatService;
 
@@ -19,6 +19,7 @@ public class CommandHandler {
 
     private final KeyBoardService keyBoardService;
 
+    @Override
     public SendMessage handleCommand(Long chatId, String command) {
 
         switch (command) {

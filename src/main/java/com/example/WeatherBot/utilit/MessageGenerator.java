@@ -1,15 +1,16 @@
-package com.example.WeatherBot.telegram.service;
+package com.example.WeatherBot.utilit;
 
 import com.example.WeatherBot.model.jsonModel.weather.Forecast;
 import com.example.WeatherBot.model.jsonModel.weather.MainWeather;
 import com.vdurmont.emoji.EmojiParser;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.text.DecimalFormat;
 import java.util.Calendar;
 
 
-@Service
+@Component
 public class MessageGenerator {
 
     public String generateStartMessage() {

@@ -20,14 +20,20 @@ public class DBCity {
     @Column(nullable = false)
     private Long id;
 
-    @Embedded
-    private City city;
-
     private String name;
 
+    private double lat;
+
+    private double lon;
+
     public DBCity(City city) {
-        this.city = city;
+        lat = city.getLat();
+        lon = city.getLon();
         name = city.getLocal_names().getRu();
+    }
+
+    public DBCity(String name) {
+        this.name = name;
     }
 }
 
