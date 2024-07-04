@@ -4,7 +4,6 @@ import com.example.WeatherBot.model.jsonModel.weather.Forecast;
 import com.example.WeatherBot.model.jsonModel.weather.MainWeather;
 import com.vdurmont.emoji.EmojiParser;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 import java.text.DecimalFormat;
 import java.util.Calendar;

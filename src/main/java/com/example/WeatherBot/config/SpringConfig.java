@@ -1,8 +1,8 @@
 package com.example.WeatherBot.config;
 
 import com.example.WeatherBot.model.DBModel.DBCity;
-import com.example.WeatherBot.service.ChatServiceImpl;
-import com.example.WeatherBot.service.DBCityServiceImpl;
+import com.example.WeatherBot.service.ChatService;
+import com.example.WeatherBot.service.DBCityService;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -15,13 +15,13 @@ import java.util.List;
 @AllArgsConstructor
 public class SpringConfig {
 
-    private final ChatServiceImpl chatServiceImpl;
+    private final ChatService chatService;
 
-    private final DBCityServiceImpl dbCityServiceImpl;
+    private final DBCityService dbCityService;
 
     @Scheduled(fixedDelay = 86400000)
     public void cleanDatabase() {
-        List<DBCity> unnecessaryCities = dbCityServiceImpl.getUnnecessaryCities(chatServiceImpl.getList());
-        unnecessaryCities.forEach(c -> dbCityServiceImpl.delete(c.getName()));
+        List<DBCity> unnecessaryCities = dbCityService.getUnnecessaryCities(chatService.getList());
+        unnecessaryCities.forEach(c -> dbCityService.delete(c.getName()));
     }
 }

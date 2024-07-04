@@ -3,7 +3,6 @@ package com.example.WeatherBot.service;
 import com.example.WeatherBot.model.DBModel.Chat;
 import com.example.WeatherBot.model.DBModel.DBCity;
 import com.example.WeatherBot.model.enums.BotState;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
