@@ -125,7 +125,7 @@ public class MessageGenerator {
                 """;
     }
 
-    public String getWeatherEmoji(String description, int hour) {
+    private String getWeatherEmoji(String description, int hour) {
         return switch (description) {
             case "ясно" -> hour == 21 || hour <= 3? EmojiParser.parseToUnicode(":new_moon:"):EmojiParser.parseToUnicode(":sunny:");
             case "пасмурно" -> EmojiParser.parseToUnicode(":cloud:");

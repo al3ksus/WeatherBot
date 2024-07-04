@@ -14,13 +14,13 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 public class CommandHandlerImplTest {
 
     @Autowired
-    CommandHandler commandHandler;
+    CommandHandlerImpl commandHandler;
     @Autowired
-    ChatService chatService;
+    ChatServiceImpl chatService;
     @Autowired
-    DBCityService dbCityService;
+    DBCityServiceImpl dbCityService;
     @Autowired
-    KeyBoardService keyBoardService;
+    KeyBoardServiceImpl keyBoardService;
     @Autowired
     MessageGenerator messageGenerator;
 
@@ -28,12 +28,12 @@ public class CommandHandlerImplTest {
 
     @BeforeEach
     void addTestChat() {
-        chatService.addChat(1L, BotState.DEFAULT);
+        chatService.addChat(chatId, BotState.DEFAULT);
     }
 
     @AfterEach
     void deleteTestChat() {
-        chatService.delete(1L);
+        chatService.delete(chatId);
     }
 
     @Test
@@ -41,7 +41,7 @@ public class CommandHandlerImplTest {
         Assertions.assertTrue(
                 commandHandler.handleCommand(chatId, "START").getText()
                         .equals(messageGenerator.generateStartMessage())
-                        && chatService.getByChatId(1L).getBotState() == BotState.DEFAULT
+                        && chatService.getByChatId(chatId).getBotState() == BotState.DEFAULT
         );
     }
 
@@ -50,7 +50,7 @@ public class CommandHandlerImplTest {
         Assertions.assertTrue(
                 commandHandler.handleCommand(chatId, "SETCITY").getText()
                         .equals(messageGenerator.generateSetCityMessage())
-                        && chatService.getByChatId(1L).getBotState() == BotState.SET_CITY
+                        && chatService.getByChatId(chatId).getBotState() == BotState.SET_CITY
         );
     }
 
@@ -59,7 +59,7 @@ public class CommandHandlerImplTest {
         Assertions.assertTrue(
                 commandHandler.handleCommand(chatId, "HELP").getText().
                         equals(messageGenerator.generateHelpMessage())
-                        && chatService.getByChatId(1L).getBotState() == BotState.DEFAULT
+                        && chatService.getByChatId(chatId).getBotState() == BotState.DEFAULT
         );
     }
 
@@ -68,7 +68,7 @@ public class CommandHandlerImplTest {
         Assertions.assertTrue(
                 commandHandler.handleCommand(chatId, "SETDEFAULTCITY").getText()
                         .equals(messageGenerator.generateSetCityMessage())
-                        && chatService.getByChatId(1L).getBotState() == BotState.SET_DEFAULT_CITY
+                        && chatService.getByChatId(chatId).getBotState() == BotState.SET_DEFAULT_CITY
         );
     }
 
@@ -77,21 +77,21 @@ public class CommandHandlerImplTest {
         Assertions.assertTrue(
                 commandHandler.handleCommand(chatId, "GETWEATHER").getText()
                         .equals(messageGenerator.generateNoDefaultCityMessage())
-                        && chatService.getByChatId(1L).getBotState() == BotState.DEFAULT
+                        && chatService.getByChatId(chatId).getBotState() == BotState.DEFAULT
         );
     }
 
     @Test
     void handleGetWeatherCommandWithDefaultCityTest() {
         dbCityService.add(new DBCity("Магадан"));
-        chatService.setDefaultCity(1L, dbCityService.findByName("Магадан").get());
+        chatService.setDefaultCity(chatId, dbCityService.findByName("Магадан").get());
         SendMessage sm = commandHandler.handleCommand(chatId, "GETWEATHER");
         Assertions.assertTrue(
                 sm.getText().equals(messageGenerator.generateWeatherMessage())
-                        && chatService.getByChatId(1L).getBotState() == BotState.GET_WEATHER_DEFAULT
+                        && chatService.getByChatId(chatId).getBotState() == BotState.GET_WEATHER_DEFAULT
                         && sm.getReplyMarkup().equals(keyBoardService.getWeatherButtonRow())
         );
-        chatService.setDefaultCity(1L, null);
+        chatService.setDefaultCity(chatId, null);
         dbCityService.delete("Магадан");
     }
 
@@ -100,7 +100,7 @@ public class CommandHandlerImplTest {
         Assertions.assertTrue(
                 commandHandler.handleCommand(chatId, "QWERTY").getText()
                         .equals(messageGenerator.generateNoSuchCommandMessage())
-                        && chatService.getByChatId(1L).getBotState() == BotState.DEFAULT
+                        && chatService.getByChatId(chatId).getBotState() == BotState.DEFAULT
         );
     }
 }

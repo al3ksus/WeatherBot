@@ -8,6 +8,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Chat;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -16,10 +17,10 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 public class BotUpdateHandlerImplTest {
 
     @Autowired
-    BotUpdateHandlerImpl botUpdateHandlerImpl;
+    BotUpdateHandlerImpl botUpdateHandler;
 
     @Autowired
-    ChatServiceImpl chatServiceImpl;
+    ChatServiceImpl chatService;
 
     @Autowired
     MessageGenerator messageGenerator;
@@ -28,41 +29,31 @@ public class BotUpdateHandlerImplTest {
     static Message message;
     static Chat chat;
 
+    static Long chatId = 1L;
+
+
     @BeforeAll
     static void InitializeObjects() {
         update = new Update();
         message = new Message();
         chat = new Chat();
 
+        chat.setId(chatId);
         message.setChat(chat);
         update.setMessage(message);
     }
 
     @Test
     void handleUpdateWithoutTextTest() {
-        chatServiceImpl.addChat(1L, BotState.DEFAULT);
-        chat.setId(1L);
-        message.setChat(chat);
-        update.setMessage(message);
-        Assertions.assertEquals(botUpdateHandlerImpl.handleUpdate(update).getText(), messageGenerator.generateGetInstructionMessage());
-        chatServiceImpl.delete(1L);
+        chatService.addChat(chatId, BotState.DEFAULT);
+        Assertions.assertEquals(botUpdateHandler.handleUpdate(update).getText(), messageGenerator.generateGetInstructionMessage());
+        chatService.delete(chatId);
     }
 
     @Test
-    void handleStartCommandTest() {
-        chatServiceImpl.addChat(1L, BotState.DEFAULT);
-        chat.setId(1L);
-        message.setText("/start");
-        Assertions.assertTrue(
-                botUpdateHandlerImpl.handleUpdate(update).getText().equals(messageGenerator.generateStartMessage())
-                        && chatServiceImpl.getByChatId(1L).getBotState() == BotState.DEFAULT
-        );
-
-        message.setText("/setcity");
-        Assertions.assertTrue(
-                botUpdateHandlerImpl.handleUpdate(update).getText().equals(messageGenerator.generateSetCityMessage())
-                        && chatServiceImpl.getByChatId(1L).getBotState() == BotState.SET_CITY
-        );
-        chatServiceImpl.delete(1L);
+    void handleUpdateWithoutMessageTest() {
+        update.setMessage(null);
+        Assertions.assertNull(botUpdateHandler.handleUpdate(update));
+        update.setMessage(message);
     }
 }
